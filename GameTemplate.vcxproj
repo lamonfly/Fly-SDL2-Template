@@ -151,7 +151,10 @@
     <Image Include="res\moss2.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Entity\Component.h" />
     <ClInclude Include="src\Core\Engine.h" />
+    <ClInclude Include="src\Entity\Entity.h" />
+    <ClInclude Include="src\Entity\System.h" />
     <ClInclude Include="src\Graphics\LTexture.h" />
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Physics\Vector2.h" />
