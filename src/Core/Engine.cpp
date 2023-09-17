@@ -74,6 +74,8 @@ bool Engine::Init()
 
 void Engine::Update()
 {
+	entityManager.refresh();
+	entityManager.update();
 }
 
 void Engine::Render()
@@ -81,6 +83,8 @@ void Engine::Render()
 	//Clear screen
 	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(mRenderer);
+
+	entityManager.draw();
 
 	for (std::pair<std::string, LTexture*> var : mTextureMap)
 	{

@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\vclib\SDL2_image-2.6.3\include;C:\vclib\SDL2-2.26.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\vclib\SDL2_image-2.6.3\lib\x64;C:\vclib\SDL2-2.26.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\vclib\SDL2_image-2.6.3\include;C:\vclib\SDL2-2.28.3\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\vclib\SDL2-2.28.3\lib\x64;C:\vclib\SDL2_image-2.6.3\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -151,10 +151,12 @@
     <Image Include="res\moss2.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Entity\Component.h" />
+    <ClInclude Include="src\Components.h" />
     <ClInclude Include="src\Core\Engine.h" />
-    <ClInclude Include="src\Entity\Entity.h" />
-    <ClInclude Include="src\Entity\System.h" />
+    <ClInclude Include="src\EntityComponentSystem\Component.h" />
+    <ClInclude Include="src\EntityComponentSystem\ECS.h" />
+    <ClInclude Include="src\EntityComponentSystem\Entity.h" />
+    <ClInclude Include="src\EntityComponentSystem\EntityManager.h" />
     <ClInclude Include="src\Graphics\LTexture.h" />
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Physics\Vector2.h" />

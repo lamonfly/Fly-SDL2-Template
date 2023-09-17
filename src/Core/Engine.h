@@ -3,7 +3,9 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <map>
+#include <vector>
 #include "../Graphics/LTexture.h"
+#include "../EntityComponentSystem/EntityManager.h"
 
 class Engine
 {
@@ -25,6 +27,7 @@ private:
 	Engine() {};
 	bool mRunning;
 	SDL_Event event;
+	EntityManager entityManager;
 	std::map<std::string, LTexture*> mTextureMap;
 
 	SDL_Window* mWindow;

@@ -43,13 +43,19 @@
     <ClInclude Include="src\Physics\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entity\Entity.h">
+    <ClInclude Include="src\EntityComponentSystem\ECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entity\Component.h">
+    <ClInclude Include="src\EntityComponentSystem\EntityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entity\System.h">
+    <ClInclude Include="src\EntityComponentSystem\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EntityComponentSystem\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Components.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
