@@ -16,7 +16,7 @@ LTexture::~LTexture()
 	Free();
 }
 
-bool LTexture::LoadFromFile(SDL_Renderer* renderer, std::string path)
+bool LTexture::LoadFromFile(std::string path)
 {
 	//Get rid of preexisting texture
 	Free();
@@ -36,7 +36,7 @@ bool LTexture::LoadFromFile(SDL_Renderer* renderer, std::string path)
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		//Create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(sRenderer, loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -87,7 +87,7 @@ void LTexture::SetAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void LTexture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void LTexture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -99,5 +99,5 @@ void LTexture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, doub
 		renderQuad.h = clip->h;
 	}
 
-	SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }

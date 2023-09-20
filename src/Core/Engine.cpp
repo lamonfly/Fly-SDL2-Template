@@ -1,6 +1,7 @@
 #include "engine.h"
 #include <iostream>
 #include "../Physics/Vector2.h"
+#include "../EntityComponentSystem/Components.h"
 
 Engine* Engine::sInstance = nullptr;
 
@@ -55,19 +56,17 @@ bool Engine::Init()
 		}
 	}
 
-	//Load Foo' texture
-	mTextureMap["Foo"] = new LTexture();
-	if (!mTextureMap["Foo"]->LoadFromFile(Engine::GetInstance()->GetRenderer(), "res/foo.png"))
-	{
-		printf("Failed to load Foo' texture image!\n");
-	}
+	//Initialize texture renderer
+	LTexture::SetRenderer(mRenderer);
 
-	//Load background texture
-	mTextureMap["Background"] = new LTexture();
-	if (!mTextureMap["Background"]->LoadFromFile(Engine::GetInstance()->GetRenderer(), "res/moss2.png"))
-	{
-		printf("Failed to load background texture image!\n");
-	}
+	//Create components
+	auto& background = entityManager.addEntity();
+	background.addComponent<TransformComponent>();
+	background.addComponent<SpriteComponent>("res/moss2.png");
+
+	auto& foo = entityManager.addEntity();
+	foo.addComponent<TransformComponent>();
+	foo.addComponent<SpriteComponent>("res/foo.png");
 
 	return mRunning;
 }
@@ -85,11 +84,6 @@ void Engine::Render()
 	SDL_RenderClear(mRenderer);
 
 	entityManager.draw();
-
-	for (std::pair<std::string, LTexture*> var : mTextureMap)
-	{
-		var.second->Render(mRenderer, 0, 0);
-	}
 
 	SDL_RenderPresent(mRenderer);
 }

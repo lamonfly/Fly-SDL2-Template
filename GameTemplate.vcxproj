@@ -151,15 +151,14 @@
     <Image Include="res\moss2.png" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Components.h" />
+    <ClInclude Include="src\EntityComponentSystem\Components.h" />
+    <ClInclude Include="src\TransformComponent.h" />
     <ClInclude Include="src\Core\Engine.h" />
-    <ClInclude Include="src\EntityComponentSystem\Component.h" />
     <ClInclude Include="src\EntityComponentSystem\ECS.h" />
-    <ClInclude Include="src\EntityComponentSystem\Entity.h" />
     <ClInclude Include="src\EntityComponentSystem\EntityManager.h" />
     <ClInclude Include="src\Graphics\LTexture.h" />
-    <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Physics\Vector2.h" />
+    <ClInclude Include="src\SpriteComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
