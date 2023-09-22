@@ -40,19 +40,10 @@
     <ClInclude Include="src\Physics\Vector2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EntityComponentSystem\ECS.h">
+    <ClInclude Include="src\Physics\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\EntityComponentSystem\EntityManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\TransformComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SpriteComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\EntityComponentSystem\Components.h">
+    <ClInclude Include="src\Graphics\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

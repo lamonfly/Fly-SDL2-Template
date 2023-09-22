@@ -1,7 +1,7 @@
 #include "engine.h"
 #include <iostream>
-#include "../Physics/Vector2.h"
-#include "../EntityComponentSystem/Components.h"
+#include "../Physics/Transform.h"
+#include "../Graphics/Sprite.h"
 
 Engine* Engine::sInstance = nullptr;
 
@@ -60,21 +60,20 @@ bool Engine::Init()
 	LTexture::SetRenderer(mRenderer);
 
 	//Create components
-	auto& background = entityManager.addEntity();
-	background.addComponent<TransformComponent>();
-	background.addComponent<SpriteComponent>("res/moss2.png");
+	entt::entity foo = mRegistry.create();
+	mRegistry.emplace<Transform>(foo);
+	mRegistry.emplace<Sprite>(foo, "res/foo.png");
 
-	auto& foo = entityManager.addEntity();
-	foo.addComponent<TransformComponent>();
-	foo.addComponent<SpriteComponent>("res/foo.png");
+	entt::entity background = mRegistry.create();
+	mRegistry.emplace<Transform>(background);
+	mRegistry.emplace<Sprite>(background, "res/moss2.png");
 
 	return mRunning;
 }
 
 void Engine::Update()
 {
-	entityManager.refresh();
-	entityManager.update();
+
 }
 
 void Engine::Render()
@@ -83,15 +82,22 @@ void Engine::Render()
 	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(mRenderer);
 
-	entityManager.draw();
+	//Render sprite
+	auto view = mRegistry.view<Transform, Sprite>();
+	for (auto entity : view) 
+	{
+		auto[transform, sprite] = view.get(entity);
+
+		sprite.Render(transform);
+	}
 
 	SDL_RenderPresent(mRenderer);
 }
 
 void Engine::Events()
 {
-	SDL_PollEvent(&event);
-	switch (event.type)
+	SDL_PollEvent(&mEvent);
+	switch (mEvent.type)
 	{
 	case SDL_QUIT:
 		Quit();
