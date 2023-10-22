@@ -56,17 +56,20 @@ bool Engine::Init()
 		}
 	}
 
-	//Initialize texture renderer
-	LTexture::SetRenderer(mRenderer);
-
 	//Create components
 	entt::entity foo = mRegistry.create();
 	mRegistry.emplace<Transform>(foo);
-	mRegistry.emplace<Sprite>(foo, "res/foo.png");
+	auto fooTex = new Texture();
+	fooTex->LoadFromFile("res/foo.png", mRenderer);
+	mTextureMap.emplace("foo", fooTex);
+	mRegistry.emplace<Sprite>(foo, fooTex);
 
 	entt::entity background = mRegistry.create();
 	mRegistry.emplace<Transform>(background);
-	mRegistry.emplace<Sprite>(background, "res/moss2.png");
+	auto backgroundTex = new Texture();
+	backgroundTex->LoadFromFile("res/moss2.png", mRenderer);
+	mTextureMap.emplace("foo", backgroundTex);
+	mRegistry.emplace<Sprite>(background, backgroundTex);
 
 	return mRunning;
 }
@@ -88,7 +91,7 @@ void Engine::Render()
 	{
 		auto[transform, sprite] = view.get(entity);
 
-		sprite.Render(transform);
+		sprite.Render(mRenderer, transform);
 	}
 
 	SDL_RenderPresent(mRenderer);
@@ -107,7 +110,7 @@ void Engine::Events()
 
 bool Engine::Clean()
 {
-	for (std::pair<std::string, LTexture*> var : mTextureMap) {
+	for (std::pair<std::string, Texture*> var : mTextureMap) {
 		var.second->Free();
 	}
 	mTextureMap.clear();

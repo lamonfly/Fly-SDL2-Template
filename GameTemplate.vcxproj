@@ -144,8 +144,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Engine.cpp" />
-    <ClCompile Include="src\Graphics\LTexture.cpp" />
+    <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Graphics\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\moss2.png" />
@@ -153,9 +154,9 @@
   <ItemGroup>
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Core\Engine.h" />
-    <ClInclude Include="src\Graphics\LTexture.h" />
     <ClInclude Include="src\Physics\Vector2.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
+    <ClInclude Include="src\Graphics\Texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

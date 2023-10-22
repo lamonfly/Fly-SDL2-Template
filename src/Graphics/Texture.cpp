@@ -1,8 +1,8 @@
-#include "LTexture.h"
+#include "Texture.h"
 
 #include <SDL_image.h>
 
-LTexture::LTexture()
+Texture::Texture()
 {
 	//Initialize
 	mTexture = NULL;
@@ -10,13 +10,13 @@ LTexture::LTexture()
 	mHeight = 0;
 }
 
-LTexture::~LTexture()
+Texture::~Texture()
 {
 	//Deallocate
 	Free();
 }
 
-bool LTexture::LoadFromFile(std::string path)
+bool Texture::LoadFromFile(std::string path, SDL_Renderer* renderer)
 {
 	//Get rid of preexisting texture
 	Free();
@@ -36,7 +36,7 @@ bool LTexture::LoadFromFile(std::string path)
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		//Create texture from surface pixels
-		newTexture = SDL_CreateTextureFromSurface(sRenderer, loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -57,7 +57,7 @@ bool LTexture::LoadFromFile(std::string path)
 	return mTexture != NULL;
 }
 
-void LTexture::Free()
+void Texture::Free()
 {
 	//Free texture if it exists
 	if (mTexture != NULL)
@@ -69,25 +69,25 @@ void LTexture::Free()
 	}
 }
 
-void LTexture::SetColor(Uint8 red, Uint8 green, Uint8 blue)
+void Texture::SetColor(Uint8 red, Uint8 green, Uint8 blue)
 {
 	//Modulate texture
 	SDL_SetTextureColorMod(mTexture, red, green, blue);
 }
 
-void LTexture::SetBlendMode(SDL_BlendMode blending) 
+void Texture::SetBlendMode(SDL_BlendMode blending)
 {
 	//Set blending mode
 	SDL_SetTextureBlendMode(mTexture, blending);
 }
 
-void LTexture::SetAlpha(Uint8 alpha) 
+void Texture::SetAlpha(Uint8 alpha)
 {
 	//Modulate texture alpha
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void LTexture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -99,5 +99,20 @@ void LTexture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 		renderQuad.h = clip->h;
 	}
 
-	SDL_RenderCopyEx(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
+}
+
+void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
+{
+	//Set rendering space and render to screen
+	SDL_FRect renderQuad = { x, y, mWidth, mHeight };
+
+	//Set clip rendering dimensions
+	if (clip != NULL)
+	{
+		renderQuad.w = clip->w;
+		renderQuad.h = clip->h;
+	}
+
+	SDL_RenderCopyExF(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }

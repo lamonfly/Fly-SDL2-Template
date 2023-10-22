@@ -1,29 +1,24 @@
 #pragma once
-#include "LTexture.h"
+
+#include "Texture.h"
+#include "../Physics/Transform.h"
+
+#include <string>
 
 class Sprite
 {
 private:
-	LTexture* texture;
+	// Texture wrapper
+	Texture* mTexture;
 
 public:
+	//Initializes variables
 	Sprite() = default;
-	Sprite(const char* path)
-	{
-		texture = new LTexture();
-		if (!texture->LoadFromFile(path))
-		{
-			printf("Failed to load %s texture image!\n", path);
-		}
-	}
+	Sprite(Texture* texture);
 
-	~Sprite()
-	{
-		texture->Free();
-	}
+	//Deallocates memory
+	~Sprite();
 
-	void Render(Transform transform)
-	{
-		texture->Render(transform.Position.X, transform.Position.Y);
-	}
+	//Renders at given transform
+	void Render(SDL_Renderer* renderer, Transform transform);
 };

@@ -5,7 +5,7 @@
 class Vector2
 {
 public:
-	int X, Y;
+	float X, Y;
 	Vector2(float x = 0, float y = 0) : X(x), Y(y) {};
 
 	// addition

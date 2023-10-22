@@ -5,7 +5,8 @@
 #include <map>
 #include <vector>
 #include <entt.hpp>
-#include "../Graphics/LTexture.h"
+
+#include "../Graphics/Texture.h"
 
 class Engine
 {
@@ -28,7 +29,7 @@ private:
 	bool mRunning;
 	SDL_Event mEvent;
 	entt::registry mRegistry;
-	std::map<std::string, LTexture*> mTextureMap;
+	std::map<std::string, Texture*> mTextureMap;
 
 	SDL_Window* mWindow;
 	SDL_Renderer* mRenderer;
