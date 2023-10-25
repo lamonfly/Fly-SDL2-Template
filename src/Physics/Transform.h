@@ -7,6 +7,7 @@ public:
 	int scale = 1;
 	Vector2 Size = Vector2(32, 32);
 	Vector2 Position;
+	double Rotation = 0.0f;
 
 	Transform() = default;
 

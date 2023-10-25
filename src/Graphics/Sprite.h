@@ -11,6 +11,8 @@ private:
 	// Texture wrapper
 	Texture* mTexture;
 
+	// Flip texture
+	SDL_RendererFlip mFlip;
 public:
 	//Initializes variables
 	Sprite() = default;
@@ -18,6 +20,9 @@ public:
 
 	//Deallocates memory
 	~Sprite();
+
+	//Set sprite flip
+	void SetFlip(SDL_RendererFlip flip);
 
 	//Renders at given transform
 	void Render(SDL_Renderer* renderer, Transform transform);

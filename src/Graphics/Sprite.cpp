@@ -5,6 +5,7 @@
 Sprite::Sprite(Texture* texture)
 {
 	mTexture = texture;
+	mFlip = SDL_FLIP_NONE;
 }
 
 Sprite::~Sprite()
@@ -13,6 +14,10 @@ Sprite::~Sprite()
 	mTexture->Free();
 }
 
+void Sprite::SetFlip(SDL_RendererFlip flip) {
+	mFlip = flip;
+}
+
 void Sprite::Render(SDL_Renderer* renderer, Transform transform) {
-	mTexture->Render(transform.Position.X, transform.Position.Y, renderer);
+	mTexture->Render(renderer, transform.Position.X, transform.Position.Y, nullptr, transform.Rotation, 0, mFlip);
 }
