@@ -1,5 +1,7 @@
 #include "engine.h"
 #include <iostream>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include "../Physics/Transform.h"
 #include "../Graphics/Sprite.h"
 
@@ -11,7 +13,7 @@ bool Engine::Init()
 	mRunning = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
 		mRunning = false;
@@ -25,8 +27,7 @@ bool Engine::Init()
 		}
 
 		//Create window
-		mWindow = SDL_CreateWindow("Game Template", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_SHOWN);
-		if (mWindow == NULL)
+		if (!mWindow.Init()) 
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
 			mRunning = false;
@@ -34,7 +35,7 @@ bool Engine::Init()
 		else
 		{
 			//Create renderer for window
-			mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+			mRenderer = mWindow.CreateRenderer();
 			if (mRenderer == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
@@ -52,6 +53,20 @@ bool Engine::Init()
 					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 					mRunning = false;
 				}
+
+				//Initialize SDL_ttf
+				if (TTF_Init() == -1) 
+				{
+					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+					mRunning = false;
+				}
+
+				//Initialize SDL_mixer
+				if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+				{
+					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+					mRunning = false;
+				}
 			}
 		}
 	}
@@ -60,14 +75,14 @@ bool Engine::Init()
 	entt::entity foo = mRegistry.create();
 	mRegistry.emplace<Transform>(foo);
 	auto fooTex = new Texture();
-	fooTex->LoadFromFile("res/foo.png", mRenderer);
+	fooTex->LoadFromFile(mRenderer, "res/foo.png");
 	mTextureMap.emplace("foo", fooTex);
 	mRegistry.emplace<Sprite>(foo, fooTex);
 
 	entt::entity background = mRegistry.create();
 	mRegistry.emplace<Transform>(background);
 	auto backgroundTex = new Texture();
-	backgroundTex->LoadFromFile("res/moss2.png", mRenderer);
+	backgroundTex->LoadFromFile(mRenderer, "res/moss2.png");
 	mTextureMap.emplace("foo", backgroundTex);
 	mRegistry.emplace<Sprite>(background, backgroundTex);
 
@@ -81,6 +96,9 @@ void Engine::Update()
 
 void Engine::Render()
 {
+	if (mWindow.isMinimized())
+		return;
+
 	//Clear screen
 	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(mRenderer);
@@ -99,12 +117,17 @@ void Engine::Render()
 
 void Engine::Events()
 {
-	SDL_PollEvent(&mEvent);
-	switch (mEvent.type)
-	{
-	case SDL_QUIT:
-		Quit();
-		break;
+	// Handle event on queue
+	while (SDL_PollEvent(&mEvent) != 0) {
+		switch (mEvent.type)
+		{
+		case SDL_QUIT:
+			Quit();
+			break;
+		}
+
+		// Handle window events
+		mWindow.HandleEvent(mEvent);
 	}
 }
 
@@ -115,11 +138,8 @@ bool Engine::Clean()
 	}
 	mTextureMap.clear();
 
-	//Destroy window	
-	SDL_DestroyRenderer(mRenderer);
-	SDL_DestroyWindow(mWindow);
-	mWindow = NULL;
-	mRenderer = NULL;
+	//Destroy window
+	mWindow.Free();
 
 	//Quit SDL subsystems
 	IMG_Quit();

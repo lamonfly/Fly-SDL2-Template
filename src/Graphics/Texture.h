@@ -22,7 +22,7 @@ public:
 	~Texture();
 
 	//Loads image at specified path
-	bool LoadFromFile(std::string path, SDL_Renderer* renderer);
+	bool LoadFromFile(SDL_Renderer* renderer, std::string path);
 
 	//Deallocates texture
 	void Free();

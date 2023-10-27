@@ -27,9 +27,15 @@
     <ClCompile Include="src\Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\moss2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\foo.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -49,5 +55,11 @@
     <ClInclude Include="src\Graphics\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="res\Roboto-Regular.ttf" />
   </ItemGroup>
 </Project>

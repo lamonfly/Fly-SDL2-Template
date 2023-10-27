@@ -7,6 +7,7 @@
 #include <entt.hpp>
 
 #include "../Graphics/Texture.h"
+#include "Window.h"
 
 class Engine
 {
@@ -31,7 +32,7 @@ private:
 	entt::registry mRegistry;
 	std::map<std::string, Texture*> mTextureMap;
 
-	SDL_Window* mWindow;
+	Window mWindow;
 	SDL_Renderer* mRenderer;
 	static Engine* sInstance;
 };
