@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <libloaderapi.h>
 
 Window::Window() 
 {
@@ -27,9 +26,8 @@ bool Window::Init()
 		return false;
 	}
 
-	// TODO: Set window name to correct name
 	// Create window
-	mWindow = SDL_CreateWindow(__FILE__, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DM.w, DM.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	mWindow = SDL_CreateWindow(_TARGETNAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DM.w, DM.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	if (mWindow != NULL)
 	{
 		mMouseFocus = true;
@@ -118,7 +116,7 @@ void Window::HandleEvent(SDL_Event& e)
 		if (updateCaption)
 		{
 			std::stringstream caption;
-			caption << __FILE__ <<" - MouseFocus:" << ((mMouseFocus) ? "On" : "Off") << " KeyboardFocus:" << ((mKeyboardFocus) ? "On" : "Off");
+			caption << _TARGETNAME <<" - MouseFocus:" << ((mMouseFocus) ? "On" : "Off") << " KeyboardFocus:" << ((mKeyboardFocus) ? "On" : "Off");
 			SDL_SetWindowTitle(mWindow, caption.str().c_str());
 		}\
 
