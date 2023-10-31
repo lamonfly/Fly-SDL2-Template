@@ -24,6 +24,9 @@ public:
 	int GetWidth() { return mWidth; }
 	int GetHeight() { return mHeight; }
 
+	// Window renderer
+	inline SDL_Renderer* GetRenderer() { return mRenderer; }
+
 	// Window focus
 	bool hasMouseFocus() { return mMouseFocus; }
 	bool hasKeyboardFocus() { return mKeyboardFocus; }

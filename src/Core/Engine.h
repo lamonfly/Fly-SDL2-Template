@@ -23,7 +23,6 @@ public:
 	void Events();
 
 	inline bool IsRunning() { return mRunning; }
-	inline SDL_Renderer* GetRenderer() { return mRenderer; }
 
 private:
 	Engine() {};
@@ -33,7 +32,6 @@ private:
 	std::map<std::string, Texture*> mTextureMap;
 
 	Window mWindow;
-	SDL_Renderer* mRenderer;
 	static Engine* sInstance;
 };
 

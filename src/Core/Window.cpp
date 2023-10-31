@@ -46,7 +46,6 @@ bool Window::Init()
 
 SDL_Renderer* Window::CreateRenderer() 
 {
-	// TODO: Keep renderer stored in window and not in engine
 	return mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 

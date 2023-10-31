@@ -102,13 +102,13 @@ void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, doubl
 void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
-	SDL_FRect renderQuad = { x, y, mWidth, mHeight };
+	SDL_FRect renderQuad = { x, y, static_cast<float>(mWidth), static_cast<float>(mHeight) };
 
 	//Set clip rendering dimensions
 	if (clip != NULL)
 	{
-		renderQuad.w = clip->w;
-		renderQuad.h = clip->h;
+		renderQuad.w = static_cast<float>(clip->w);
+		renderQuad.h = static_cast<float>(clip->h);
 	}
 
 	SDL_RenderCopyExF(renderer, mTexture, clip, &renderQuad, angle, center, flip);

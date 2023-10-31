@@ -35,8 +35,8 @@ bool Engine::Init()
 		else
 		{
 			//Create renderer for window
-			mRenderer = mWindow.CreateRenderer();
-			if (mRenderer == NULL)
+			mWindow.CreateRenderer();
+			if (mWindow.GetRenderer() == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
 				mRunning = false;
@@ -44,7 +44,7 @@ bool Engine::Init()
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_SetRenderDrawColor(mWindow.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -75,14 +75,14 @@ bool Engine::Init()
 	entt::entity foo = mRegistry.create();
 	mRegistry.emplace<Transform>(foo);
 	auto fooTex = new Texture();
-	fooTex->LoadFromFile(mRenderer, "res/foo.png");
+	fooTex->LoadFromFile(mWindow.GetRenderer(), "res/foo.png");
 	mTextureMap.emplace("foo", fooTex);
 	mRegistry.emplace<Sprite>(foo, fooTex);
 
 	entt::entity background = mRegistry.create();
 	mRegistry.emplace<Transform>(background);
 	auto backgroundTex = new Texture();
-	backgroundTex->LoadFromFile(mRenderer, "res/moss2.png");
+	backgroundTex->LoadFromFile(mWindow.GetRenderer(), "res/moss2.png");
 	mTextureMap.emplace("foo", backgroundTex);
 	mRegistry.emplace<Sprite>(background, backgroundTex);
 
@@ -100,8 +100,8 @@ void Engine::Render()
 		return;
 
 	//Clear screen
-	SDL_SetRenderDrawColor(mRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(mRenderer);
+	SDL_SetRenderDrawColor(mWindow.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(mWindow.GetRenderer());
 
 	//Render sprite
 	auto view = mRegistry.view<Transform, Sprite>();
@@ -109,10 +109,10 @@ void Engine::Render()
 	{
 		auto[transform, sprite] = view.get(entity);
 
-		sprite.Render(mRenderer, transform);
+		sprite.Render(mWindow.GetRenderer(), transform);
 	}
 
-	SDL_RenderPresent(mRenderer);
+	SDL_RenderPresent(mWindow.GetRenderer());
 }
 
 void Engine::Events()
