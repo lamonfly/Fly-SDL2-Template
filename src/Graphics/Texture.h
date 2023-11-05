@@ -10,6 +10,9 @@ private:
 	//The actual hardware texture
 	SDL_Texture* mTexture;
 
+	//SDL renderer used for images
+	static SDL_Renderer* sRenderer;
+
 	//Image dimensions
 	int mWidth;
 	int mHeight;
@@ -22,7 +25,7 @@ public:
 	~Texture();
 
 	//Loads image at specified path
-	bool LoadFromFile(SDL_Renderer* renderer, std::string path);
+	bool LoadFromFile(std::string path);
 
 	//Deallocates texture
 	void Free();
@@ -37,11 +40,14 @@ public:
 	void SetAlpha(Uint8 alpha);
 
 	//Renders texture at given point
-	void Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
-	void Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_FPoint* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void Render(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void Render(float x, float y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_FPoint* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-	//Gets image dimensions
+	//Get image dimensions
 	inline int GetWidth() { return mWidth; }
 	inline int GetHeight() { return mHeight; }
+
+	//Set renderer
+	inline static void SetRenderer(SDL_Renderer* renderer) { sRenderer = renderer; }
 };
 

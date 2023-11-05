@@ -22,6 +22,8 @@ public:
 	void Render();
 	void Events();
 
+	Window* GetWindow() { return mWindow; }
+
 	inline bool IsRunning() { return mRunning; }
 
 private:
@@ -31,7 +33,7 @@ private:
 	entt::registry mRegistry;
 	std::map<std::string, Texture*> mTextureMap;
 
-	Window mWindow;
+	Window* mWindow;
 	static Engine* sInstance;
 };
 

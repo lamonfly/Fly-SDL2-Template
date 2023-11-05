@@ -25,5 +25,5 @@ public:
 	void SetFlip(SDL_RendererFlip flip);
 
 	//Renders at given transform
-	void Render(SDL_Renderer* renderer, Transform transform);
+	void Render(Transform transform);
 };

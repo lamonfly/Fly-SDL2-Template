@@ -4,6 +4,7 @@
 #include <SDL_ttf.h>
 #include "../Physics/Transform.h"
 #include "../Graphics/Sprite.h"
+#include "../SampleScene.h"
 
 Engine* Engine::sInstance = nullptr;
 
@@ -27,7 +28,8 @@ bool Engine::Init()
 		}
 
 		//Create window
-		if (!mWindow.Init()) 
+		mWindow = new Window();
+		if (!mWindow->Init()) 
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
 			mRunning = false;
@@ -35,16 +37,19 @@ bool Engine::Init()
 		else
 		{
 			//Create renderer for window
-			mWindow.CreateRenderer();
-			if (mWindow.GetRenderer() == NULL)
+			mWindow->CreateRenderer();
+			if (mWindow->GetRenderer() == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
 				mRunning = false;
 			}
 			else
 			{
+				//Set texture renderer
+				Texture::SetRenderer(mWindow->GetRenderer());
+
 				//Initialize renderer color
-				SDL_SetRenderDrawColor(mWindow.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -71,20 +76,8 @@ bool Engine::Init()
 		}
 	}
 
-	//Create components
-	entt::entity foo = mRegistry.create();
-	mRegistry.emplace<Transform>(foo);
-	auto fooTex = new Texture();
-	fooTex->LoadFromFile(mWindow.GetRenderer(), "res/foo.png");
-	mTextureMap.emplace("foo", fooTex);
-	mRegistry.emplace<Sprite>(foo, fooTex);
-
-	entt::entity background = mRegistry.create();
-	mRegistry.emplace<Transform>(background);
-	auto backgroundTex = new Texture();
-	backgroundTex->LoadFromFile(mWindow.GetRenderer(), "res/moss2.png");
-	mTextureMap.emplace("foo", backgroundTex);
-	mRegistry.emplace<Sprite>(background, backgroundTex);
+	auto scene = new SampleScene();
+	scene->Init(&mRegistry);
 
 	return mRunning;
 }
@@ -96,12 +89,12 @@ void Engine::Update()
 
 void Engine::Render()
 {
-	if (mWindow.isMinimized())
+	if (mWindow->isMinimized())
 		return;
 
 	//Clear screen
-	SDL_SetRenderDrawColor(mWindow.GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(mWindow.GetRenderer());
+	SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_RenderClear(mWindow->GetRenderer());
 
 	//Render sprite
 	auto view = mRegistry.view<Transform, Sprite>();
@@ -109,10 +102,10 @@ void Engine::Render()
 	{
 		auto[transform, sprite] = view.get(entity);
 
-		sprite.Render(mWindow.GetRenderer(), transform);
+		sprite.Render(transform);
 	}
 
-	SDL_RenderPresent(mWindow.GetRenderer());
+	SDL_RenderPresent(mWindow->GetRenderer());
 }
 
 void Engine::Events()
@@ -127,7 +120,7 @@ void Engine::Events()
 		}
 
 		// Handle window events
-		mWindow.HandleEvent(mEvent);
+		mWindow->HandleEvent(mEvent);
 	}
 }
 
@@ -139,7 +132,7 @@ bool Engine::Clean()
 	mTextureMap.clear();
 
 	//Destroy window
-	mWindow.Free();
+	mWindow->Free();
 
 	//Quit SDL subsystems
 	IMG_Quit();

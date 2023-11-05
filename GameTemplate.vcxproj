@@ -148,6 +148,9 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Core\Window.cpp" />
+    <ClCompile Include="src\SampleScene.h">
+      <FileType>CppHeader</FileType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\foo.png" />
@@ -160,6 +163,7 @@
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Core\Window.h" />
+    <ClInclude Include="src\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\Roboto-Regular.ttf" />

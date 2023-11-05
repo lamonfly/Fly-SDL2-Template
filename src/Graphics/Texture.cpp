@@ -3,6 +3,8 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
+SDL_Renderer* Texture::sRenderer = nullptr;
+
 Texture::Texture()
 {
 	//Initialize
@@ -17,7 +19,7 @@ Texture::~Texture()
 	Free();
 }
 
-bool Texture::LoadFromFile(SDL_Renderer* renderer, std::string path)
+bool Texture::LoadFromFile(std::string path)
 {
 	//Get rid of preexisting texture
 	Free();
@@ -34,7 +36,7 @@ bool Texture::LoadFromFile(SDL_Renderer* renderer, std::string path)
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		//Create texture from surface pixels
-		mTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+		mTexture = SDL_CreateTextureFromSurface(sRenderer, loadedSurface);
 		if (mTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -84,7 +86,7 @@ void Texture::SetAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Texture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -96,10 +98,10 @@ void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, doubl
 		renderQuad.h = clip->h;
 	}
 
-	SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
-void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
+void Texture::Render(float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_FRect renderQuad = { x, y, static_cast<float>(mWidth), static_cast<float>(mHeight) };
@@ -111,5 +113,5 @@ void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, d
 		renderQuad.h = static_cast<float>(clip->h);
 	}
 
-	SDL_RenderCopyExF(renderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyExF(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
