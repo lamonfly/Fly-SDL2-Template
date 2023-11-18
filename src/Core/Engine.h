@@ -6,8 +6,8 @@
 #include <vector>
 #include <entt.hpp>
 
-#include "../Graphics/Texture.h"
 #include "Window.h"
+#include "../Scene.h"
 
 class Engine
 {
@@ -30,8 +30,7 @@ private:
 	Engine() {};
 	bool mRunning;
 	SDL_Event mEvent;
-	entt::registry mRegistry;
-	std::map<std::string, Texture*> mTextureMap;
+	std::vector<Scene*> mScenes = {};
 
 	Window* mWindow;
 	static Engine* sInstance;

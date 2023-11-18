@@ -2,8 +2,8 @@
 #include <iostream>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
-#include "../Physics/Transform.h"
-#include "../Graphics/Sprite.h"
+
+// TODO: Remove scene instantiation from engine init
 #include "../SampleScene.h"
 
 Engine* Engine::sInstance = nullptr;
@@ -45,9 +45,6 @@ bool Engine::Init()
 			}
 			else
 			{
-				//Set texture renderer
-				Texture::SetRenderer(mWindow->GetRenderer());
-
 				//Initialize renderer color
 				SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 
@@ -76,15 +73,17 @@ bool Engine::Init()
 		}
 	}
 
-	auto scene = new SampleScene();
-	scene->Init(&mRegistry);
+	mScenes.push_back(new SampleScene());
 
 	return mRunning;
 }
 
 void Engine::Update()
 {
-
+	for (auto scene : mScenes)
+	{
+		scene->Update();
+	}
 }
 
 void Engine::Render()
@@ -96,13 +95,10 @@ void Engine::Render()
 	SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(mWindow->GetRenderer());
 
-	//Render sprite
-	auto view = mRegistry.view<Transform, Sprite>();
-	for (auto entity : view) 
+	//Render scenes
+	for (auto scene : mScenes) 
 	{
-		auto[transform, sprite] = view.get(entity);
-
-		sprite.Render(transform);
+		scene->Render(mWindow->GetRenderer());
 	}
 
 	SDL_RenderPresent(mWindow->GetRenderer());
@@ -121,16 +117,16 @@ void Engine::Events()
 
 		// Handle window events
 		mWindow->HandleEvent(mEvent);
+
+		for (auto scene : mScenes)
+		{
+			scene->HandleEvent(mEvent);
+		}
 	}
 }
 
 bool Engine::Clean()
 {
-	for (std::pair<std::string, Texture*> var : mTextureMap) {
-		var.second->Free();
-	}
-	mTextureMap.clear();
-
 	//Destroy window
 	mWindow->Free();
 

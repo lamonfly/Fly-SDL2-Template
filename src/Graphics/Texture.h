@@ -2,6 +2,7 @@
 
 #include <string>
 #include <SDL.h>
+#include "../Core/Engine.h"
 
 //Texture wrapper class
 class Texture
@@ -11,7 +12,7 @@ private:
 	SDL_Texture* mTexture;
 
 	//SDL renderer used for images
-	static SDL_Renderer* sRenderer;
+	inline SDL_Renderer* GetRenderer() { return Engine::GetInstance()->GetWindow()->GetRenderer(); }
 
 	//Image dimensions
 	int mWidth;
@@ -46,8 +47,5 @@ public:
 	//Get image dimensions
 	inline int GetWidth() { return mWidth; }
 	inline int GetHeight() { return mHeight; }
-
-	//Set renderer
-	inline static void SetRenderer(SDL_Renderer* renderer) { sRenderer = renderer; }
 };
 

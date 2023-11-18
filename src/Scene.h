@@ -1,4 +1,5 @@
 #pragma once
+#include <SDL.h>
 #include <entt.hpp>
 
 // Interface for scene setup
@@ -7,6 +8,9 @@ public:
 	Scene() = default;
 	~Scene() = default;
 
-	// Creates entites related to scene
-	virtual bool Init(entt::registry* registry) = 0;
+	virtual void Update() = 0;
+	virtual void Render(SDL_Renderer* renderer) = 0;
+	virtual void HandleEvent(SDL_Event& e) = 0;
+protected:
+	entt::registry mRegistry;
 };

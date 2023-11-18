@@ -3,8 +3,6 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 
-SDL_Renderer* Texture::sRenderer = nullptr;
-
 Texture::Texture()
 {
 	//Initialize
@@ -36,7 +34,7 @@ bool Texture::LoadFromFile(std::string path)
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
 
 		//Create texture from surface pixels
-		mTexture = SDL_CreateTextureFromSurface(sRenderer, loadedSurface);
+		mTexture = SDL_CreateTextureFromSurface(GetRenderer(), loadedSurface);
 		if (mTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -98,7 +96,7 @@ void Texture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cent
 		renderQuad.h = clip->h;
 	}
 
-	SDL_RenderCopyEx(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(GetRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
 }
 
 void Texture::Render(float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
@@ -113,5 +111,5 @@ void Texture::Render(float x, float y, SDL_Rect* clip, double angle, SDL_FPoint*
 		renderQuad.h = static_cast<float>(clip->h);
 	}
 
-	SDL_RenderCopyExF(sRenderer, mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyExF(GetRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
 }

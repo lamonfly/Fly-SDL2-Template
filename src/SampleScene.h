@@ -5,24 +5,44 @@
 #include "Physics/Transform.h"
 #include "Graphics/Sprite.h"
 
-class SampleScene : Scene 
+class SampleScene : public Scene 
 {
 public:
-	bool Init(entt::registry* registry) override
+	SampleScene()
 	{
 		//Create components
-		entt::entity foo = registry->create();
-		registry->emplace<Transform>(foo);
+		entt::entity foo = mRegistry.create();
+		mRegistry.emplace<Transform>(foo);
 		auto fooTex = new Texture();
 		fooTex->LoadFromFile("res/foo.png");
-		registry->emplace<Sprite>(foo, fooTex);
+		mRegistry.emplace<Sprite>(foo, fooTex);
 
-		entt::entity background = registry->create();
-		registry->emplace<Transform>(background);
+		entt::entity background = mRegistry.create();
+		mRegistry.emplace<Transform>(background);
 		auto backgroundTex = new Texture();
 		backgroundTex->LoadFromFile("res/moss2.png");
-		registry->emplace<Sprite>(background, backgroundTex);
-
-		return true;
+		mRegistry.emplace<Sprite>(background, backgroundTex);
 	};
+
+	void Update() override
+	{
+
+	}
+
+	void Render(SDL_Renderer* renderer) override
+	{
+		//Render sprite
+		auto view = mRegistry.view<Transform, Sprite>();
+		for (auto entity : view)
+		{
+			auto [transform, sprite] = view.get(entity);
+
+			sprite.Render(transform);
+		}
+	}
+
+	void HandleEvent(SDL_Event& e) override
+	{
+
+	}
 };
