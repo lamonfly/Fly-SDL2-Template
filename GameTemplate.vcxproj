@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\vendor\entt\single_include\entt;C:\vclib\SDL2_image-2.6.3\include;C:\vclib\SDL2_mixer-2.6.3\include;C:\vclib\SDL2-2.28.3\include;C:\vclib\SDL2_ttf-2.20.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\vclib\SDL2-2.28.3\lib\x64;C:\vclib\SDL2_mixer-2.6.3\lib\x64;C:\vclib\SDL2_image-2.6.3\lib\x64;C:\vclib\SDL2_ttf-2.20.2\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)vendor\entt\single_include\entt;C:\vclib\SDL2_image-2.8.2\include;C:\vclib\SDL2_mixer-2.8.0\include;C:\vclib\SDL2-2.30.0\include;C:\vclib\SDL2_ttf-2.22.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\vclib\SDL2-2.30.0\lib\x64;C:\vclib\SDL2_mixer-2.8.0\lib\x64;C:\vclib\SDL2_image-2.8.2\lib\x64;C:\vclib\SDL2_ttf-2.22.0\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
