@@ -8,7 +8,7 @@
 class SampleScene : public Scene 
 {
 public:
-	SampleScene()
+	void Init() override 
 	{
 		//Create components
 		entt::entity foo = mRegistry.create();
@@ -22,7 +22,7 @@ public:
 		auto backgroundTex = new Texture();
 		backgroundTex->LoadFromFile("res/moss2.png");
 		mRegistry.emplace<Sprite>(background, backgroundTex);
-	};
+	}
 
 	void Update() override
 	{

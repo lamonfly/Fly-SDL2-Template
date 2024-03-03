@@ -14,7 +14,7 @@ class Engine
 public:
 	static Engine* GetInstance() { return (sInstance != nullptr)? sInstance : sInstance = new Engine(); }
 
-	bool Init();
+	bool Init(Scene*);
 	bool Clean();
 	void Quit();
 

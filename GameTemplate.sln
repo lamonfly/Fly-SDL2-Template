@@ -3,18 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameTemplate", "GameTemplate.vcxproj", "{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Transmission", "Transmission\Transmission.vcxproj", "{129D7836-5E76-40B8-9529-BE6EC63C7803}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF} = {2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Debug|x64.ActiveCfg = Debug|x64
 		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Debug|x64.Build.0 = Debug|x64
+		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Debug|x86.Build.0 = Debug|Win32
 		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Release|x64.ActiveCfg = Release|x64
 		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Release|x64.Build.0 = Release|x64
+		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Release|x86.ActiveCfg = Release|Win32
+		{2C6E959E-6D7E-42EC-9CE1-F4DF0B0B0DAF}.Release|x86.Build.0 = Release|Win32
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Debug|x64.ActiveCfg = Debug|x64
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Debug|x64.Build.0 = Debug|x64
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Debug|x86.ActiveCfg = Debug|Win32
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Debug|x86.Build.0 = Debug|Win32
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Release|x64.ActiveCfg = Release|x64
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Release|x64.Build.0 = Release|x64
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Release|x86.ActiveCfg = Release|Win32
+		{129D7836-5E76-40B8-9529-BE6EC63C7803}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

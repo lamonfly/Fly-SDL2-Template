@@ -3,12 +3,9 @@
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
-// TODO: Remove scene instantiation from engine init
-#include "../SampleScene.h"
-
 Engine* Engine::sInstance = nullptr;
 
-bool Engine::Init()
+bool Engine::Init(Scene* initialScene)
 {
 	//Initialization flag
 	mRunning = true;
@@ -73,7 +70,8 @@ bool Engine::Init()
 		}
 	}
 
-	mScenes.push_back(new SampleScene());
+	initialScene->Init();
+	mScenes.push_back(initialScene);
 
 	return mRunning;
 }

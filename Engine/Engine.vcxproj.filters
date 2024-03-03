@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -30,17 +27,6 @@
     <ClCompile Include="src\Core\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SampleScene.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\moss2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="res\foo.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Engine.h">
@@ -66,6 +52,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="res\Roboto-Regular.ttf" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
