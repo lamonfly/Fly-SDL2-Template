@@ -19,5 +19,5 @@ void Sprite::SetFlip(SDL_RendererFlip flip) {
 }
 
 void Sprite::Render(Transform transform) {
-	mTexture->Render(transform.Position.X, transform.Position.Y, nullptr, transform.Rotation, 0, mFlip);
+	mTexture->Render(transform.Position.X, transform.Position.Y, nullptr, transform.getRotation(), 0, mFlip);
 }

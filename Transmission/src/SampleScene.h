@@ -1,15 +1,20 @@
 // Base needs
-#include "Scene.h"
+#include "Scene/Scene.h"
 
 // Components
 #include "Physics/Transform.h"
 #include "Graphics/Sprite.h"
+#include <Scene/Camera.h>
 
 class SampleScene : public Scene 
 {
 public:
-	void Init() override 
+	void Init() override  
 	{
+		auto camera = mRegistry.create();
+		mRegistry.emplace<Transform>(camera);
+		mRegistry.emplace<Camera>(camera);
+
 		//Create components
 		entt::entity foo = mRegistry.create();
 		mRegistry.emplace<Transform>(foo);
@@ -27,18 +32,6 @@ public:
 	void Update() override
 	{
 
-	}
-
-	void Render(SDL_Renderer* renderer) override
-	{
-		//Render sprite
-		auto view = mRegistry.view<Transform, Sprite>();
-		for (auto entity : view)
-		{
-			auto [transform, sprite] = view.get(entity);
-
-			sprite.Render(transform);
-		}
 	}
 
 	void HandleEvent(SDL_Event& e) override

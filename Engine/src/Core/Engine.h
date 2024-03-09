@@ -7,7 +7,7 @@
 #include <entt.hpp>
 
 #include "Window.h"
-#include "../Scene.h"
+#include "../Scene/Scene.h"
 
 class Engine
 {
