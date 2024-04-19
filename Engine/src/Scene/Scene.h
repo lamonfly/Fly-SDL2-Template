@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h>
-#include <entt.hpp>
+#include <entt/entt.hpp>
 
 // Interface for scene setup
 class Scene {

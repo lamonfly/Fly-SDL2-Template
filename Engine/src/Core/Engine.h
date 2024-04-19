@@ -4,7 +4,7 @@
 #include <SDL_image.h>
 #include <map>
 #include <vector>
-#include <entt.hpp>
+#include <entt/entt.hpp>
 
 #include "Window.h"
 #include "../Scene/Scene.h"
