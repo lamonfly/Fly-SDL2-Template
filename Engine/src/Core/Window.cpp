@@ -14,6 +14,7 @@ Window::Window()
 	mMinimized = false;
 	mWidth = 0;
 	mHeight = 0;
+	mColor = {.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF };
 }
 
 bool Window::Init() 

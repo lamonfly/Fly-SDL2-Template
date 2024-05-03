@@ -32,6 +32,10 @@ public:
 	bool hasKeyboardFocus() { return mKeyboardFocus; }
 	bool isMinimized() { return mMinimized; }
 
+	// Window Background
+	SDL_Color GetColor() { return mColor; }
+	void SetColor(SDL_Color color) { mColor = color; }
+
 private:
 	// Window data
 	SDL_Window* mWindow;
@@ -48,4 +52,7 @@ private:
 	bool mKeyboardFocus;
 	bool mFullScreen;
 	bool mMinimized;
+
+	// Background Color
+	SDL_Color mColor;
 };

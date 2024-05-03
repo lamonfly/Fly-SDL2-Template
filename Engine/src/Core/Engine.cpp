@@ -43,7 +43,7 @@ bool Engine::Init(Scene* initialScene)
 			else
 			{
 				//Initialize renderer color
-				SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+				SDL_SetRenderDrawColor(mWindow->GetRenderer(), mWindow->GetColor().r, mWindow->GetColor().g, mWindow->GetColor().b, mWindow->GetColor().a);
 
 				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
@@ -90,7 +90,7 @@ void Engine::Render()
 		return;
 
 	//Clear screen
-	SDL_SetRenderDrawColor(mWindow->GetRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(mWindow->GetRenderer(), mWindow->GetColor().r, mWindow->GetColor().g, mWindow->GetColor().b, mWindow->GetColor().a);
 	SDL_RenderClear(mWindow->GetRenderer());
 
 	//Render scenes

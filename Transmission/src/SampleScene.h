@@ -19,7 +19,7 @@ public:
 		entt::entity foo = mRegistry.create();
 		mRegistry.emplace<Transform>(foo);
 		auto fooTex = new Texture();
-		fooTex->LoadFromFile("res/foo.png");
+		fooTex->LoadFromFile("res/foo.png", {.r = 0, .g = 0xFF, .b = 0xFF });
 		mRegistry.emplace<Sprite>(foo, fooTex);
 
 		entt::entity background = mRegistry.create();

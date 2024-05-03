@@ -27,6 +27,7 @@ public:
 
 	//Loads image at specified path
 	bool LoadFromFile(std::string path);
+	bool LoadFromFile(std::string path, SDL_Color colorKey);
 
 	//Deallocates texture
 	void Free();
