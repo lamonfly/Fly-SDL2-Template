@@ -29,6 +29,11 @@ public:
 		mRegistry.emplace<Sprite>(background, backgroundTex);
 	}
 
+	void Render(SDL_Renderer* renderer) override
+	{
+		RenderSprite();
+	}
+
 	void Update() override
 	{
 
