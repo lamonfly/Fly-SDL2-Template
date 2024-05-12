@@ -14,6 +14,8 @@ Window::Window()
 	mMinimized = false;
 	mWidth = 0;
 	mHeight = 0;
+	mResolutionWidth = 1920;
+	mResolutionHeight = 1080;
 	mColor = {.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF };
 }
 
@@ -37,10 +39,13 @@ bool Window::Init()
 		mHeight = DM.h;
 	}
 
-	if (!mFullScreen) 
+	if (!mFullScreen)
 	{
 		SDL_MaximizeWindow(mWindow);
 	}
+
+	SDL_RenderSetLogicalSize(mRenderer, mResolutionWidth, mResolutionHeight);
+	SDL_RenderSetIntegerScale(mRenderer, SDL_TRUE);
 
 	return mWindow != NULL;
 }
@@ -118,9 +123,7 @@ void Window::HandleEvent(SDL_Event& e)
 			std::stringstream caption;
 			caption << _TARGETNAME <<" - MouseFocus:" << ((mMouseFocus) ? "On" : "Off") << " KeyboardFocus:" << ((mKeyboardFocus) ? "On" : "Off");
 			SDL_SetWindowTitle(mWindow, caption.str().c_str());
-		}\
-
-
+		}
 	}
 	// Enter exit full screen on return key
 	else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RETURN)

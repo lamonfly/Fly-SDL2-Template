@@ -47,6 +47,10 @@ private:
 	int mWidth;
 	int mHeight;
 
+	// Resolution dimensions
+	int mResolutionWidth;
+	int mResolutionHeight;
+
 	// Window focus
 	bool mMouseFocus;
 	bool mKeyboardFocus;
