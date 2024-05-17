@@ -5,6 +5,7 @@
 #include "Physics/Transform.h"
 #include "Graphics/Sprite.h"
 #include <Scene/Camera.h>
+#include <Graphics/Line.h>
 
 class SampleScene : public Scene 
 {
@@ -27,11 +28,16 @@ public:
 		auto backgroundTex = new Texture();
 		backgroundTex->LoadFromFile("res/moss2.png");
 		mRegistry.emplace<Sprite>(background, backgroundTex);
+
+		entt::entity sampleLine = mRegistry.create();
+		mRegistry.emplace<Transform>(sampleLine);
+		mRegistry.emplace<Line>(sampleLine, Vector2(0, 0), Vector2(100, 100));
 	}
 
 	void Render(SDL_Renderer* renderer) override
 	{
 		RenderSprite();
+		RenderLine(renderer);
 	}
 
 	void Update() override

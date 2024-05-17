@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\Line.cpp" />
     <ClCompile Include="src\Scene\Camera.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\Line.h" />
     <ClInclude Include="src\Scene\Camera.h" />
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Core\Engine.h" />
