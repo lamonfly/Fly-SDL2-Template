@@ -6,8 +6,8 @@
 class Line
 {
 public:
-	Vector2 Start = (0, 0);
-	Vector2 End = (0, 0);
+	Vector2 Start = { 0, 0 };
+	Vector2 End = { 0, 0 };
 	SDL_Color Color = { 0,0,0,255 };
 
 	// Initializes variables

@@ -22,37 +22,35 @@ Window::Window()
 bool Window::Init() 
 {
 	// Get window size
-	SDL_DisplayMode DM;
-	if (SDL_GetCurrentDisplayMode(0, &DM) < 0)
+	SDL_Rect Re;
+	if (SDL_GetDisplayUsableBounds(0, &Re) < 0)
 	{
-		printf("SDL could not get current display mode! SDL Error: %s\n", SDL_GetError());
+		printf("SDL could not get display usable bounds! SDL Error: %s\n", SDL_GetError());
 		return false;
 	}
 
 	// Create window
-	mWindow = SDL_CreateWindow(_TARGETNAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, DM.w, DM.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	mWindow = SDL_CreateWindow(_TARGETNAME, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, Re.w, Re.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 	if (mWindow != NULL)
 	{
 		mMouseFocus = true;
 		mKeyboardFocus = true;
-		mWidth = DM.w;
-		mHeight = DM.h;
+		mWidth = Re.w;
+		mHeight = Re.h;
 	}
-
-	if (!mFullScreen)
-	{
-		SDL_MaximizeWindow(mWindow);
-	}
-
-	SDL_RenderSetLogicalSize(mRenderer, mResolutionWidth, mResolutionHeight);
-	SDL_RenderSetIntegerScale(mRenderer, SDL_TRUE);
 
 	return mWindow != NULL;
 }
 
 SDL_Renderer* Window::CreateRenderer() 
 {
-	return mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+	// Set resolution
+	SDL_RenderSetLogicalSize(mRenderer, mResolutionWidth, mResolutionHeight);
+	SDL_RenderSetIntegerScale(mRenderer, SDL_TRUE);
+
+	return mRenderer;
 }
 
 void Window::HandleEvent(SDL_Event& e) 
