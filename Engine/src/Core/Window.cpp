@@ -14,9 +14,8 @@ Window::Window()
 	mMinimized = false;
 	mWidth = 0;
 	mHeight = 0;
-	mResolutionWidth = 1920;
-	mResolutionHeight = 1080;
-	mColor = {.r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF };
+	mResolutionWidth = 320;
+	mResolutionHeight = 240;
 }
 
 bool Window::Init() 

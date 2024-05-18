@@ -15,6 +15,6 @@ public:
 protected:
 	entt::registry mRegistry;
 
-	void RenderSprite();
+	void RenderSprite(SDL_Renderer* renderer);
 	void RenderLine(SDL_Renderer* renderer);
 };

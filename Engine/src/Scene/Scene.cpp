@@ -7,7 +7,7 @@ Scene::~Scene() {
 	mRegistry.clear();
 }
 
-void Scene::RenderSprite() {
+void Scene::RenderSprite(SDL_Renderer* renderer) {
 	// Render camera view
 	auto spriteView = mRegistry.view<Transform, Sprite>();
 	auto cameraView = mRegistry.view<Transform, Camera>();

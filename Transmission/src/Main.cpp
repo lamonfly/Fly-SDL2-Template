@@ -11,7 +11,7 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		Engine::GetInstance()->GetWindow()->SetColor({ .r = 28, .g = 28, .b = 28 });
+		Engine::GetInstance()->GetWindow()->Color = { .r = 28, .g = 28, .b = 28 };
 
 		while (Engine::GetInstance()->IsRunning())
 		{
