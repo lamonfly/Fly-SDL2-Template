@@ -14,7 +14,7 @@ Window::Window()
 	mMinimized = false;
 	mWidth = 0;
 	mHeight = 0;
-	mResolutionWidth = 320;
+	mResolutionWidth = 426;
 	mResolutionHeight = 240;
 }
 

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Texture.h"
-#include "../Physics/Transform.h"
+#include "Renderable.h"
 
 #include <string>
 
-class Sprite
+class Sprite : Renderable
 {
 private:
 	// Texture wrapper
@@ -25,5 +25,5 @@ public:
 	void SetFlip(SDL_RendererFlip flip);
 
 	//Renders at given transform
-	void Render(Transform transform);
+	void Render(SDL_Renderer* renderer, Transform transform) override;
 };

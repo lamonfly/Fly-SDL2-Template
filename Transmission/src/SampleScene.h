@@ -6,6 +6,8 @@
 #include "Graphics/Sprite.h"
 #include <Scene/Camera.h>
 #include <Graphics/Line.h>
+#include <Graphics/Circle.h>
+#include <Event/Grab.h>
 
 class SampleScene : public Scene 
 {
@@ -32,12 +34,18 @@ public:
 		entt::entity sampleLine = mRegistry.create();
 		mRegistry.emplace<Transform>(sampleLine);
 		mRegistry.emplace<Line>(sampleLine, Vector2(0, 0), Vector2(100, 100));
+
+		entt::entity sampleCircle = mRegistry.create();
+		mRegistry.emplace<Transform>(sampleCircle);
+		mRegistry.emplace<Circle>(sampleCircle, 4);
+		mRegistry.emplace<Grab>(sampleCircle);
 	}
 
 	void Render(SDL_Renderer* renderer) override
 	{
-		RenderSprite();
-		RenderLine(renderer);
+		RenderType<Sprite>(renderer);
+		RenderType<Line>(renderer);
+		RenderType<Circle>(renderer);
 	}
 
 	void Update() override
@@ -47,6 +55,8 @@ public:
 
 	void HandleEvent(SDL_Event& e) override
 	{
-
+		for (auto&& [entity, transform, grab] : mRegistry.view<Transform, Grab>().each()) {
+			grab.HandleEvent(e, transform);
+		}
 	}
 };

@@ -13,8 +13,5 @@ public:
 
 	Camera() = default;
 	~Camera() = default;
-
-	// Renders set of sprite
-	void RenderSprite(Transform transform, std::tuple<Transform&, Sprite&> sprite);
 };
 

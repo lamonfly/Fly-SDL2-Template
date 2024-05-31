@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include <entt/entt.hpp>
+#include "../Physics/Transform.h"
 
 // Interface for scene setup
 class Scene {
@@ -15,6 +16,9 @@ public:
 protected:
 	entt::registry mRegistry;
 
-	void RenderSprite(SDL_Renderer* renderer);
-	void RenderLine(SDL_Renderer* renderer);
+	template<typename T> inline void RenderType(SDL_Renderer* renderer) {
+		for (auto&& [entity, transform, type] : mRegistry.view<Transform, T>().each()) {
+			type.Render(renderer, transform);
+		}
+	}
 };

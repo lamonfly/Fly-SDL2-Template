@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Event\Grab.cpp" />
+    <ClCompile Include="src\Graphics\Circle.cpp" />
     <ClCompile Include="src\Graphics\Line.cpp" />
     <ClCompile Include="src\Scene\Camera.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
@@ -159,7 +161,10 @@
     <ClCompile Include="src\Scene\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Event\Grab.h" />
+    <ClInclude Include="src\Graphics\Circle.h" />
     <ClInclude Include="src\Graphics\Line.h" />
+    <ClInclude Include="src\Graphics\Renderable.h" />
     <ClInclude Include="src\Scene\Camera.h" />
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Core\Engine.h" />

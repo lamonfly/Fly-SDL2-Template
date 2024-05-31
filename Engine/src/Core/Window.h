@@ -24,6 +24,10 @@ public:
 	int GetWidth() { return mWidth; }
 	int GetHeight() { return mHeight; }
 
+	// Window dimensions
+	int GetResolutionWidth() { return mResolutionWidth; }
+	int GetResolutionHeight() { return mResolutionHeight; }
+
 	// Window renderer
 	inline SDL_Renderer* GetRenderer() { return mRenderer; }
 

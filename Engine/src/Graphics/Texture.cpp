@@ -118,7 +118,7 @@ void Texture::SetAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void Texture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -130,10 +130,10 @@ void Texture::Render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cent
 		renderQuad.h = clip->h;
 	}
 
-	SDL_RenderCopyEx(GetRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
-void Texture::Render(float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
+void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, double angle, SDL_FPoint* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_FRect renderQuad = { x, y, static_cast<float>(mWidth), static_cast<float>(mHeight) };
@@ -145,5 +145,5 @@ void Texture::Render(float x, float y, SDL_Rect* clip, double angle, SDL_FPoint*
 		renderQuad.h = static_cast<float>(clip->h);
 	}
 
-	SDL_RenderCopyExF(GetRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyExF(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }

@@ -6,7 +6,7 @@ Line::Line(Vector2 start, Vector2 end)
 	End = end;
 }
 
-void Line::Render(SDL_Renderer* renderer, Vector2 position) {
+void Line::Render(SDL_Renderer* renderer, Transform transform) {
 	SDL_SetRenderDrawColor(renderer, Color.r, Color.g, Color.b, Color.a);
-	SDL_RenderDrawLineF(renderer, Start.X + position.X, Start.Y + position.Y, End.X + position.X, End.Y + position.Y);
+	SDL_RenderDrawLineF(renderer, Start.X + transform.Position.X, Start.Y + transform.Position.Y, End.X + transform.Position.X, End.Y + transform.Position.Y);
 }
