@@ -8,6 +8,7 @@
 #include <Graphics/Line.h>
 #include <Graphics/Circle.h>
 #include <Event/Grab.h>
+#include <Graphics/Text.h>
 
 class SampleScene : public Scene 
 {
@@ -39,6 +40,12 @@ public:
 		mRegistry.emplace<Circle>(sampleCircle);
 		mRegistry.emplace<Grab>(sampleCircle);
 		mRegistry.emplace<Transform>(sampleCircle).Scale = 4;
+
+		entt::entity sampleText = mRegistry.create();
+		mRegistry.emplace<Transform>(sampleText);
+		auto textTex = new Texture();
+		textTex->LoadText(TTF_OpenFont("res/Roboto-Regular.ttf", 12), "This a a sample text", {255, 255, 255});
+		mRegistry.emplace<Text>(sampleText, textTex);
 	}
 
 	void Render(SDL_Renderer* renderer) override
@@ -46,6 +53,7 @@ public:
 		RenderType<Sprite>(renderer);
 		RenderType<Line>(renderer);
 		RenderType<Circle>(renderer);
+		RenderType<Text>(renderer);
 	}
 
 	void Update() override

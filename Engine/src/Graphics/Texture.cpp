@@ -88,6 +88,40 @@ bool Texture::LoadFromFile(std::string path, SDL_Color colorKey)
 	return mTexture != NULL;
 }
 
+bool Texture::LoadText(TTF_Font* font, std::string text, SDL_Color color)
+{
+	//Get rid of preexisting texture
+	Free();
+
+	//Load text
+	SDL_Surface* loadedSurface = TTF_RenderText_Solid(font, text.c_str(), color);
+	if (loadedSurface == NULL)
+	{
+		printf("Unable to load text! SDL_ttf Error: %s\n", TTF_GetError());
+	}
+	else
+	{
+		//Create texture from surface pixels
+		mTexture = SDL_CreateTextureFromSurface(GetRenderer(), loadedSurface);
+		if (mTexture == NULL)
+		{
+			printf("Unable to create texture from text! SDL Error: %s\n", SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions
+			mWidth = loadedSurface->w;
+			mHeight = loadedSurface->h;
+		}
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	//Return success
+	return mTexture != NULL;
+}
+
 void Texture::Free()
 {
 	//Free texture if it exists

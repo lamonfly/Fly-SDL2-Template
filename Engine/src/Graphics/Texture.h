@@ -2,6 +2,7 @@
 
 #include <string>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include "../Core/Engine.h"
 
 //Texture wrapper class
@@ -28,6 +29,9 @@ public:
 	//Loads image at specified path
 	bool LoadFromFile(std::string path);
 	bool LoadFromFile(std::string path, SDL_Color colorKey);
+
+	//Loads text with font
+	bool LoadText(TTF_Font* font, std::string text, SDL_Color color);
 
 	//Deallocates texture
 	void Free();
