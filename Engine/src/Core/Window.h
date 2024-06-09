@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include "../Physics/Vector2.h"
 
 class Window
 {
@@ -39,6 +40,9 @@ public:
 	// Window Background Color
 	SDL_Color Color = { .r = 0xFF, .g = 0xFF, .b = 0xFF, .a = 0xFF };
 
+	// Mouse Position
+	inline Vector2 GetMouseLogicalPosition() { return mMouseLogicalPosition; }
+
 private:
 	// Window data
 	SDL_Window* mWindow;
@@ -59,4 +63,8 @@ private:
 	bool mKeyboardFocus;
 	bool mFullScreen;
 	bool mMinimized;
+
+	// Mouse position
+	int mMouseX, mMouseY;
+	Vector2 mMouseLogicalPosition;
 };

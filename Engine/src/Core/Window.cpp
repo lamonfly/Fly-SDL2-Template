@@ -54,6 +54,10 @@ SDL_Renderer* Window::CreateRenderer()
 
 void Window::HandleEvent(SDL_Event& e) 
 {
+	// Get mouse position
+	SDL_GetMouseState(&mMouseX, &mMouseY);
+	SDL_RenderWindowToLogical(GetRenderer(), mMouseX, mMouseY, &mMouseLogicalPosition.X, &mMouseLogicalPosition.Y);
+
 	// Window event occured
 	if (e.type == SDL_WINDOWEVENT) 
 	{

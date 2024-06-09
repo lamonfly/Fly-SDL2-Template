@@ -1,6 +1,7 @@
 #pragma once
 
 #include <format>
+#include <cmath>
 
 class Vector2
 {
@@ -19,5 +20,10 @@ public:
 
 	// string
 	inline operator std::string() const { return std::format("({},{})", X, Y); }
-};
 
+	// distance
+	inline float Distance(Vector2 other)
+	{
+		return sqrtf(powf(X - other.X, 2) + powf(Y - other.Y, 2));
+	};
+};

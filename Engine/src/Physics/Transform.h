@@ -7,7 +7,7 @@ private:
 	double rotation = 0.0f;
 
 public:
-	int scale = 1;
+	float Scale = 1;
 	Vector2 Size = { 32, 32 };
 	Vector2 Position;
 

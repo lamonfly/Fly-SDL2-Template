@@ -36,9 +36,9 @@ public:
 		mRegistry.emplace<Line>(sampleLine, Vector2(0, 0), Vector2(100, 100));
 
 		entt::entity sampleCircle = mRegistry.create();
-		mRegistry.emplace<Transform>(sampleCircle);
-		mRegistry.emplace<Circle>(sampleCircle, 4);
+		mRegistry.emplace<Circle>(sampleCircle);
 		mRegistry.emplace<Grab>(sampleCircle);
+		mRegistry.emplace<Transform>(sampleCircle).Scale = 4;
 	}
 
 	void Render(SDL_Renderer* renderer) override

@@ -6,12 +6,10 @@
 class Circle : Renderable
 {
 public:
-	float Radius = 1;
 	SDL_Color Color = { 0,0,0,255 };
 
 	// Initializes variables
 	Circle() = default;
-	Circle(float radius);
 
 	// Deallocates memorys
 	~Circle() = default;
