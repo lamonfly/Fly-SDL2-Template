@@ -8,7 +8,7 @@ private:
 
 public:
 	float Scale = 1;
-	Vector2 Size = { 32, 32 };
+	Vector2 Size = { 1, 1 };
 	Vector2 Position;
 
 	Transform() = default;

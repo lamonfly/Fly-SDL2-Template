@@ -5,7 +5,7 @@
 
 Engine* Engine::sInstance = nullptr;
 
-bool Engine::Init(Scene* initialScene)
+bool Engine::Init()
 {
 	//Initialization flag
 	mRunning = true;
@@ -70,18 +70,42 @@ bool Engine::Init(Scene* initialScene)
 		}
 	}
 
-	initialScene->Init();
-	mScenes.push_back(initialScene);
-
 	return mRunning;
+}
+
+void Engine::LoadScene(const std::string& identifier, const std::string& activeId)
+{
+	tasks.push_back([identifier, activeId, this]() {
+		auto it = mScenes.find(identifier);
+		if (it != mScenes.end()) {
+			Scene* newScene = it->second();
+			newScene->Init();
+			mActiveScenes[activeId] = newScene;
+		}
+	});
+}
+
+void Engine::RemoveScene(const std::string& activeId)
+{
+	tasks.push_back([activeId, this]() {
+		mActiveScenes.erase(activeId);
+	});
 }
 
 void Engine::Update()
 {
-	for (auto scene : mScenes)
+	mLastUpdate = mNowUpdate;
+	mNowUpdate = SDL_GetPerformanceCounter();
+
+	for (auto scene : mActiveScenes)
 	{
-		scene->Update();
+		scene.second->Update((mNowUpdate - mLastUpdate) / (double)SDL_GetPerformanceFrequency());
 	}
+
+	for (const auto& task : tasks) {
+		task();
+	}
+	tasks.clear();
 }
 
 void Engine::Render()
@@ -94,9 +118,9 @@ void Engine::Render()
 	SDL_RenderClear(mWindow->GetRenderer());
 
 	//Render scenes
-	for (auto scene : mScenes) 
+	for (auto scene : mActiveScenes) 
 	{
-		scene->Render(mWindow->GetRenderer());
+		scene.second->Render(mWindow->GetRenderer());
 	}
 
 	SDL_RenderPresent(mWindow->GetRenderer());
@@ -116,9 +140,9 @@ void Engine::Events()
 		// Handle window events
 		mWindow->HandleEvent(mEvent);
 
-		for (auto scene : mScenes)
+		for (auto scene : mActiveScenes)
 		{
-			scene->HandleEvent(mEvent);
+			scene.second->HandleEvent(mEvent);
 		}
 	}
 }
