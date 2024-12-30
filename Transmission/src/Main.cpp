@@ -1,6 +1,6 @@
 #include "Core/Engine.h"
 #include "SampleScene.h"
-#include "BackgroundScene.h"
+#include "GameOverScene.h"
 
 #include <stdio.h>
 
@@ -12,12 +12,13 @@ int main(int argc, char* args[])
 	}
 	else
 	{
-		Engine::GetInstance()->AddScene<BackgroundScene>("background");
-		Engine::GetInstance()->LoadScene("background", "background");
-		Engine::GetInstance()->AddScene<SampleScene>("game");
-		Engine::GetInstance()->LoadScene("game", "game");
+		srand(time(NULL));
 
-		Engine::GetInstance()->GetWindow()->Color = { .r = 0, .g = 0, .b = 0 };
+		Engine::GetInstance()->AddScene<SampleScene>("SampleScene");
+		Engine::GetInstance()->AddScene<GameOverScene>("GameOverScene");
+		Engine::GetInstance()->LoadScene("SampleScene", "SampleScene");
+
+		Engine::GetInstance()->GetWindow()->Color = { .r = 200, .g = 233, .b = 233 };
 
 		while (Engine::GetInstance()->IsRunning())
 		{

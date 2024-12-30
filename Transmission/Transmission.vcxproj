@@ -142,8 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Snake\Apple.cpp" />
-    <ClCompile Include="src\Snake\Snake.cpp" />
+    <ClCompile Include="src\Breakout\BallMovement.cpp" />
+    <ClCompile Include="src\Breakout\Brick.cpp" />
+    <ClCompile Include="src\Breakout\PlayerPlatform.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,17 +154,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\LedasLuzta.ogg" />
+    <None Include="res\LedasLuzta2.ogg" />
+    <None Include="res\LedasLuzta33.ogg" />
+    <None Include="res\LedasLuzta4.ogg" />
+    <None Include="res\LedasLuzta5.ogg" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BackgroundScene.h" />
-    <ClInclude Include="src\Snake\Apple.h" />
-    <ClInclude Include="src\Snake\Snake.h" />
+    <ClInclude Include="src\Breakout\BallMovement.h" />
+    <ClInclude Include="src\Breakout\Brick.h" />
+    <ClInclude Include="src\Breakout\PlayerPlatform.h" />
+    <ClInclude Include="src\GameOverScene.h" />
     <ClInclude Include="src\SampleScene.h" />
-    <ClInclude Include="src\Snake\SnakePoint.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\foo.png" />
-    <Image Include="res\moss2.png" />
+    <Image Include="res\ice.png" />
+    <Image Include="res\ice_cracked.png" />
+    <Image Include="res\swirlstroke_red.png" />
+    <Image Include="res\wood.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="res\Roboto-Regular.ttf" />
@@ -176,9 +184,9 @@
     <Import Project="..\packages\sdl2_image.nuget.2.8.2\build\native\sdl2_image.nuget.targets" Condition="Exists('..\packages\sdl2_image.nuget.2.8.2\build\native\sdl2_image.nuget.targets')" />
     <Import Project="..\packages\sdl2_mixer.nuget.redist.2.8.0\build\native\sdl2_mixer.nuget.redist.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.redist.2.8.0\build\native\sdl2_mixer.nuget.redist.targets')" />
     <Import Project="..\packages\sdl2_mixer.nuget.2.8.0\build\native\sdl2_mixer.nuget.targets" Condition="Exists('..\packages\sdl2_mixer.nuget.2.8.0\build\native\sdl2_mixer.nuget.targets')" />
-    <Import Project="..\packages\fluid.entt.1.0.9\build\fluid.entt.targets" Condition="Exists('..\packages\fluid.entt.1.0.9\build\fluid.entt.targets')" />
-    <Import Project="..\packages\sdl2.nuget.redist.2.30.7\build\native\sdl2.nuget.redist.targets" Condition="Exists('..\packages\sdl2.nuget.redist.2.30.7\build\native\sdl2.nuget.redist.targets')" />
-    <Import Project="..\packages\sdl2.nuget.2.30.7\build\native\sdl2.nuget.targets" Condition="Exists('..\packages\sdl2.nuget.2.30.7\build\native\sdl2.nuget.targets')" />
+    <Import Project="..\packages\fluid.entt.1.0.10\build\fluid.entt.targets" Condition="Exists('..\packages\fluid.entt.1.0.10\build\fluid.entt.targets')" />
+    <Import Project="..\packages\sdl2.nuget.redist.2.30.9\build\native\sdl2.nuget.redist.targets" Condition="Exists('..\packages\sdl2.nuget.redist.2.30.9\build\native\sdl2.nuget.redist.targets')" />
+    <Import Project="..\packages\sdl2.nuget.2.30.9\build\native\sdl2.nuget.targets" Condition="Exists('..\packages\sdl2.nuget.2.30.9\build\native\sdl2.nuget.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -190,8 +198,8 @@
     <Error Condition="!Exists('..\packages\sdl2_image.nuget.2.8.2\build\native\sdl2_image.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_image.nuget.2.8.2\build\native\sdl2_image.nuget.targets'))" />
     <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.redist.2.8.0\build\native\sdl2_mixer.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.redist.2.8.0\build\native\sdl2_mixer.nuget.redist.targets'))" />
     <Error Condition="!Exists('..\packages\sdl2_mixer.nuget.2.8.0\build\native\sdl2_mixer.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2_mixer.nuget.2.8.0\build\native\sdl2_mixer.nuget.targets'))" />
-    <Error Condition="!Exists('..\packages\fluid.entt.1.0.9\build\fluid.entt.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\fluid.entt.1.0.9\build\fluid.entt.targets'))" />
-    <Error Condition="!Exists('..\packages\sdl2.nuget.redist.2.30.7\build\native\sdl2.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.redist.2.30.7\build\native\sdl2.nuget.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\sdl2.nuget.2.30.7\build\native\sdl2.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.2.30.7\build\native\sdl2.nuget.targets'))" />
+    <Error Condition="!Exists('..\packages\fluid.entt.1.0.10\build\fluid.entt.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\fluid.entt.1.0.10\build\fluid.entt.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2.nuget.redist.2.30.9\build\native\sdl2.nuget.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.redist.2.30.9\build\native\sdl2.nuget.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\sdl2.nuget.2.30.9\build\native\sdl2.nuget.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\sdl2.nuget.2.30.9\build\native\sdl2.nuget.targets'))" />
   </Target>
 </Project>

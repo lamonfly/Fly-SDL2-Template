@@ -157,13 +157,6 @@ void Texture::Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, doubl
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
-	//Set clip rendering dimensions
-	if (clip != NULL)
-	{
-		renderQuad.w = clip->w;
-		renderQuad.h = clip->h;
-	}
-
 	SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }
 
@@ -171,13 +164,6 @@ void Texture::Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip, d
 {
 	//Set rendering space and render to screen
 	SDL_FRect renderQuad = { x, y, static_cast<float>(mWidth), static_cast<float>(mHeight) };
-
-	//Set clip rendering dimensions
-	if (clip != NULL)
-	{
-		renderQuad.w = static_cast<float>(clip->w);
-		renderQuad.h = static_cast<float>(clip->h);
-	}
 
 	SDL_RenderCopyExF(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }

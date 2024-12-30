@@ -24,8 +24,8 @@ public:
 	}
 
 	inline void setRotation(double newRotation) {
-		newRotation = fmod(newRotation + 180, 360);
-		if (newRotation < 0)
+		rotation = fmod(newRotation, 360);
+		if (rotation < 0)
 			rotation += 360;
 	}
 

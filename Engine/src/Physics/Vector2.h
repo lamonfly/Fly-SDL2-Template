@@ -2,8 +2,9 @@
 
 #include <format>
 #include <cmath>
+#include <string>
 
-class Vector2
+struct Vector2
 {
 public:
 	float X, Y;
@@ -53,6 +54,15 @@ public:
 		else {
 			return Vector2(0, 0);
 		}
+	}
+
+	// dot
+	inline float Dot(Vector2 other) {
+		return X * other.X + Y * other.Y;
+	}
+
+	inline std::string ToString() {
+		return std::format("({},{})", X, Y);
 	}
 
 	// Given three collinear points the function checks if 

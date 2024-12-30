@@ -5,5 +5,5 @@
 
 class Eventable {
 public:
-	virtual void HandleEvent(SDL_Event& e, Transform& transform) = 0;
+	virtual void HandleEvent(SDL_Event& e) = 0;
 };

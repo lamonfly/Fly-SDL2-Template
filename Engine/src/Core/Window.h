@@ -33,8 +33,6 @@ public:
 	inline SDL_Renderer* GetRenderer() { return mRenderer; }
 
 	// Window focus
-	bool hasMouseFocus() { return mMouseFocus; }
-	bool hasKeyboardFocus() { return mKeyboardFocus; }
 	bool isMinimized() { return mMinimized; }
 
 	// Window Background Color
@@ -59,8 +57,6 @@ private:
 	int mResolutionHeight;
 
 	// Window focus
-	bool mMouseFocus;
-	bool mKeyboardFocus;
 	bool mFullScreen;
 	bool mMinimized;
 

@@ -94,12 +94,23 @@ void Engine::RemoveScene(const std::string& activeId)
 
 void Engine::Update()
 {
+	if (mWindow->isMinimized()) {
+		mNowUpdate = SDL_GetPerformanceCounter();
+		return;
+	}
+
 	mLastUpdate = mNowUpdate;
 	mNowUpdate = SDL_GetPerformanceCounter();
+	double delta = (mNowUpdate - mLastUpdate) / (double)SDL_GetPerformanceFrequency();
 
 	for (auto scene : mActiveScenes)
 	{
-		scene.second->Update((mNowUpdate - mLastUpdate) / (double)SDL_GetPerformanceFrequency());
+		scene.second->UpdatePhysics(delta);
+	}
+
+	for (auto scene : mActiveScenes)
+	{
+		scene.second->Update(delta);
 	}
 
 	for (const auto& task : tasks) {
@@ -116,6 +127,9 @@ void Engine::Render()
 	//Clear screen
 	SDL_SetRenderDrawColor(mWindow->GetRenderer(), mWindow->Color.r, mWindow->Color.g, mWindow->Color.b, mWindow->Color.a);
 	SDL_RenderClear(mWindow->GetRenderer());
+
+	//Set scale
+	SDL_RenderSetScale(mWindow->GetRenderer(), (float)mWindow->GetWidth() / mWindow->GetResolutionWidth(), (float)mWindow->GetHeight() / mWindow->GetResolutionHeight());
 
 	//Render scenes
 	for (auto scene : mActiveScenes) 

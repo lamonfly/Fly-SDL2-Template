@@ -16,8 +16,8 @@ private:
 	inline SDL_Renderer* GetRenderer() { return Engine::GetInstance()->GetWindow()->GetRenderer(); }
 
 	//Image dimensions
-	int mWidth;
-	int mHeight;
+	float mWidth;
+	float mHeight;
 
 public:
 	//Initializes variables
@@ -45,12 +45,15 @@ public:
 	//Set alpha modulation
 	void SetAlpha(Uint8 alpha);
 
+	//Set size
+	void SetSize(float width, float height) { mWidth = width; mHeight = height; }
+
 	//Renders texture at given point
 	void Render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	void Render(SDL_Renderer* renderer, float x, float y, SDL_Rect* clip = NULL, double angle = 0.0, SDL_FPoint* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	//Get image dimensions
-	inline int GetWidth() { return mWidth; }
-	inline int GetHeight() { return mHeight; }
+	inline float GetWidth() { return mWidth; }
+	inline float GetHeight() { return mHeight; }
 };
 

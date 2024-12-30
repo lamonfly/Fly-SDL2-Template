@@ -18,38 +18,52 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Snake\Snake.cpp">
+    <ClCompile Include="src\Breakout\PlayerPlatform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Snake\Apple.cpp">
+    <ClCompile Include="src\Breakout\BallMovement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Breakout\Brick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="res\LedasLuzta.ogg" />
+    <None Include="res\LedasLuzta2.ogg" />
+    <None Include="res\LedasLuzta4.ogg" />
+    <None Include="res\LedasLuzta5.ogg" />
+    <None Include="res\LedasLuzta33.ogg" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SampleScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Snake\Snake.h">
+    <ClInclude Include="src\Breakout\PlayerPlatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Snake\Apple.h">
+    <ClInclude Include="src\Breakout\BallMovement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BackgroundScene.h">
+    <ClInclude Include="src\Breakout\Brick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Snake\SnakePoint.h">
+    <ClInclude Include="src\GameOverScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\foo.png">
+    <Image Include="res\ice.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\moss2.png">
+    <Image Include="res\wood.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\swirlstroke_red.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ice_cracked.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

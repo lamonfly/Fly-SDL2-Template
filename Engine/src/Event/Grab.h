@@ -9,6 +9,6 @@ class Grab : Eventable
 private:
 	bool isGrabbing = false;
 public:
-	void HandleEvent(SDL_Event& e, Transform& transform) override;
+	void HandleEvent(SDL_Event& e) override;
 };
 
