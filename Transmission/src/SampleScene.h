@@ -4,8 +4,10 @@
 // Components
 #include <Physics/Transform.h>
 #include <Physics/Collider/Collider.h>
+#include <Physics/Collider/CollisionLayer.h>
 #include <Physics/Collider/Shapes/RectShape.h>
 #include <Physics/Collider/Shapes/CircleShape.h>
+#include <Physics/SpatialPartitioning/SpatialPartitionConfig.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/Circle.h>
 #include <Graphics/Text.h>
@@ -24,6 +26,13 @@ public:
 	{
 		int windowHeight = Engine::GetInstance()->GetWindow()->GetResolutionHeight();
 		int windowWidth = Engine::GetInstance()->GetWindow()->GetResolutionWidth();
+
+		SpatialPartitionConfig spatialConfig;
+		spatialConfig.Strategy = SpatialPartitionStrategy::Grid;
+		spatialConfig.WorldSize = Vector2(windowWidth, windowHeight);
+		spatialConfig.GridCellSize = 80.0f;
+		spatialConfig.SeparateStaticDynamic = true;
+		SetSpatialPartitionConfig(spatialConfig);
 
 		//Bricks values
 		float brickTotalHeight = windowHeight / 3;
@@ -56,7 +65,10 @@ public:
 				int hTex = rand() % static_cast<int>(1024 - brickHeight * textureMul);
 				SDL_Rect* clip = new SDL_Rect{ wTex, hTex, wTex + static_cast<int>(brickWidth * textureMul), hTex + static_cast<int>(brickHeight * textureMul) };
 				mRegistry.emplace<Sprite>(brick, brickTex).SetClip(clip);
-				mRegistry.emplace<Collider>(brick, shape);
+				auto& brickCollider = mRegistry.emplace<Collider>(brick, shape);
+				brickCollider.IsStatic = true;
+				brickCollider.Layer = CollisionLayer::World;
+				brickCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 				mRegistry.emplace<Brick>(brick);
 			}
 		}
@@ -66,7 +78,9 @@ public:
 
 		auto platform = mRegistry.create();
 		mRegistry.emplace<Transform>(platform, Vector2((float)(windowWidth - platformWidth) / 2, brickSpacing));
-		mRegistry.emplace<Collider>(platform, new RectShape(Vector2(platformWidth, brickHeight)));
+		auto& platformCollider = mRegistry.emplace<Collider>(platform, new RectShape(Vector2(platformWidth, brickHeight)));
+		platformCollider.Layer = CollisionLayer::Player;
+		platformCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 		mRegistry.emplace<PlayerPlatform>(platform, windowWidth - platformWidth);
 
 		//Texture
@@ -78,7 +92,11 @@ public:
 		//Ball values
 		auto ball = mRegistry.create();
 		mRegistry.emplace<Transform>(ball, Vector2(windowWidth/ 2, brickHeight + brickSpacing + 10));
-		mRegistry.emplace<Collider>(ball, new CircleShape(6));
+		auto& ballCollider = mRegistry.emplace<Collider>(ball, new CircleShape(6));
+		ballCollider.Layer = CollisionLayer::Projectile;
+		ballCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::World | CollisionLayer::Player);
+		ballCollider.UseCCD = true;
+		ballCollider.CCDSpeedThreshold = 200.0f;
 		mRegistry.emplace<BallMovement>(ball);
 
 		//Texture
@@ -90,16 +108,28 @@ public:
 		//Walls
 		auto leftWall = mRegistry.create();
 		mRegistry.emplace<Transform>(leftWall, Vector2(-10, 0));
-		mRegistry.emplace<Collider>(leftWall, new RectShape(Vector2(10, windowHeight)));
+		auto& leftWallCollider = mRegistry.emplace<Collider>(leftWall, new RectShape(Vector2(10, windowHeight)));
+		leftWallCollider.IsStatic = true;
+		leftWallCollider.Layer = CollisionLayer::World;
+		leftWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 		auto rightWall = mRegistry.create();
 		mRegistry.emplace<Transform>(rightWall, Vector2(windowWidth + 1, 0));
-		mRegistry.emplace<Collider>(rightWall, new RectShape(Vector2(10, windowHeight)));
+		auto& rightWallCollider = mRegistry.emplace<Collider>(rightWall, new RectShape(Vector2(10, windowHeight)));
+		rightWallCollider.IsStatic = true;
+		rightWallCollider.Layer = CollisionLayer::World;
+		rightWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 		auto bottomWall = mRegistry.create();
 		mRegistry.emplace<Transform>(bottomWall, Vector2(-10, windowHeight));
-		mRegistry.emplace<Collider>(bottomWall, new RectShape(Vector2(windowWidth + 20, 10)));
+		auto& bottomWallCollider = mRegistry.emplace<Collider>(bottomWall, new RectShape(Vector2(windowWidth + 20, 10)));
+		bottomWallCollider.IsStatic = true;
+		bottomWallCollider.Layer = CollisionLayer::World;
+		bottomWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 		auto topWall = mRegistry.create();
 		mRegistry.emplace<Transform>(topWall, Vector2(-10, -25));
-		mRegistry.emplace<Collider>(topWall, new RectShape(Vector2(windowWidth + 50, 10)));
+		auto& topWallCollider = mRegistry.emplace<Collider>(topWall, new RectShape(Vector2(windowWidth + 50, 10)));
+		topWallCollider.IsStatic = true;
+		topWallCollider.Layer = CollisionLayer::World;
+		topWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
 		topWallID = entt::to_integral(topWall);
 
 		entt::entity sampleText = mRegistry.create();

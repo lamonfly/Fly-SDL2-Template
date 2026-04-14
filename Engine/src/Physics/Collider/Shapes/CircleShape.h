@@ -1,7 +1,7 @@
 #pragma once
 #include "Shape.h"
 #include "../ColliderTools.h"
- 
+
 struct CircleShape : Shape
 {
 public:
@@ -9,4 +9,7 @@ public:
 	CircleShape(float radius) : Radius(radius) {};
 
 	Collision* Collide(Transform& current, Transform& other, Shape* shape) override;
+
+	AABB GetAABB(const Transform& transform) const override;
+	BoundingSphere GetBoundingSphere(const Transform& transform) const override;
 };

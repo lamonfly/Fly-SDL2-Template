@@ -11,3 +11,19 @@ Collision* CircleShape::Collide(Transform& current, Transform& other, Shape* sha
 
 	throw std::logic_error("Collision function not implemented yet!");
 }
+
+AABB CircleShape::GetAABB(const Transform& transform) const
+{
+	Vector2 center = transform.Position + Vector2(Radius, Radius);
+	float scaledRadius = Radius * transform.Scale;
+	return AABB(
+		Vector2(center.X - scaledRadius, center.Y - scaledRadius),
+		Vector2(center.X + scaledRadius, center.Y + scaledRadius)
+	);
+}
+
+BoundingSphere CircleShape::GetBoundingSphere(const Transform& transform) const
+{
+	Vector2 center = transform.Position + Vector2(Radius, Radius);
+	return BoundingSphere(center, Radius * transform.Scale);
+}

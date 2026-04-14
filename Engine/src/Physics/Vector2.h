@@ -35,7 +35,7 @@ public:
 	inline operator std::string() const { return std::format("({},{})", X, Y); }
 
 	// distance
-	inline float Distance(Vector2 other)
+	inline float Distance(Vector2 other) const
 	{
 		return sqrtf(powf(X - other.X, 2) + powf(Y - other.Y, 2));
 	};

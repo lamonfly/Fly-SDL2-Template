@@ -10,4 +10,7 @@ public:
 	RectShape(Vector2 dimension) : Dimension(dimension) {};
 
 	Collision* Collide(Transform& current, Transform& other, Shape* shape) override;
+
+	AABB GetAABB(const Transform& transform) const override;
+	BoundingSphere GetBoundingSphere(const Transform& transform) const override;
 };
