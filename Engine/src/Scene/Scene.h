@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include <entt/entt.hpp>
 #include "../Physics/Transform.h"
+#include "../Physics/Collider/BroadPhase.h"
+#include "../Physics/SpatialPartitioning/SpatialPartitionConfig.h"
 
 // Interface for scene setup
 class Scene {
@@ -13,8 +15,13 @@ public:
 	virtual void Render(SDL_Renderer* renderer) = 0;
 	virtual void HandleEvent(SDL_Event& e) = 0;
 	void UpdatePhysics(double deltaTime);
+
+	void SetSpatialPartitionConfig(const SpatialPartitionConfig& config);
+	const SpatialPartitionConfig& GetSpatialPartitionConfig() const;
+
 protected:
 	entt::registry mRegistry;
+	BroadPhase mBroadPhase;
 
 	template<typename T> inline void RenderType(SDL_Renderer* renderer) {
 		for (auto&& [entity, transform, type] : mRegistry.view<Transform, T>().each()) {

@@ -1,6 +1,16 @@
 #include "ColliderTools.h"
 #include <iostream>
 
+bool ColliderTools::TestAABB(const AABB& a, const AABB& b)
+{
+    return a.Intersects(b);
+}
+
+bool ColliderTools::TestSphere(const BoundingSphere& a, const BoundingSphere& b)
+{
+    return a.Intersects(b);
+}
+
 Collision* ColliderTools::collideCircleCircle(Vector2 a, float aRadius, Vector2 b, float bRadius)
 {
     // Calculate the distance between the centers
@@ -20,25 +30,32 @@ Collision* ColliderTools::collideCircleCircle(Vector2 a, float aRadius, Vector2 
 
 Collision* ColliderTools::collideRectangleRectangle(Vector2 a, Vector2 aDimension, Vector2 b, Vector2 bDimension)
 {
-	// Rectangle A
-    auto rectABottomRight = Vector2(a.X + aDimension.X, a.Y + aDimension.Y);
+	auto rectABottomRight = Vector2(a.X + aDimension.X, a.Y + aDimension.Y);
+	auto rectBBottomRight = Vector2(b.X + bDimension.X, b.Y + bDimension.Y);
 
-    // Rectangle B
-    auto rectBBottomRight = Vector2(b.X + bDimension.X, b.Y + bDimension.Y);
+	if (a.X < rectBBottomRight.X &&
+		rectABottomRight.X > b.X &&
+		a.Y < rectBBottomRight.Y &&
+		rectABottomRight.Y > b.Y) 
+	{
+		float overlapX = std::min(rectABottomRight.X, rectBBottomRight.X) - std::max(a.X, b.X);
+		float overlapY = std::min(rectABottomRight.Y, rectBBottomRight.Y) - std::max(a.Y, b.Y);
 
-    // Check if rectangles overlap
-    if (rectABottomRight.X < b.X &&
-        a.X > rectBBottomRight.X &&
-        rectABottomRight.Y < b.Y &&
-        a.Y > rectBBottomRight.Y) 
-    {
-        // Point of collision: the center of the overlap area
-        Vector2 collisionPoint = Vector2((rectABottomRight.X + a.X) / 2.0f, (rectABottomRight.Y + a.Y) / 2.0f);
-        // Normal vector (simple approach for overlap)
-        Vector2 normal = Vector2(rectBBottomRight.X - a.X, rectABottomRight.Y - a.Y);  // Can be improved based on overlap side
-        return new Collision(collisionPoint, normal);
-    }
-    return NULL;
+		Vector2 collisionPoint = Vector2(
+			std::max(a.X, b.X) + overlapX * 0.5f,
+			std::max(a.Y, b.Y) + overlapY * 0.5f
+		);
+
+		Vector2 normal;
+		if (overlapX < overlapY) {
+			normal = (a.X < b.X) ? Vector2(-1, 0) : Vector2(1, 0);
+		} else {
+			normal = (a.Y < b.Y) ? Vector2(0, -1) : Vector2(0, 1);
+		}
+
+		return new Collision(collisionPoint, normal);
+	}
+	return NULL;
 }
 
 Collision* ColliderTools::collideCircleRectangle(Vector2 a, float aRadius, Vector2 b, Vector2 bDimension)
