@@ -152,18 +152,7 @@
     <ClInclude Include="src\Physics\Velocity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\CCD_UsageExamples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\Collider\CollisionLayer_UsageExamples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\SpatialPartitioning\UsageExamples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\Collider\BoundingVolumes\UsageExamples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
