@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{129d7836-5e76-40b8-9529-be6ec63c7803}</ProjectGuid>
-    <RootNamespace>Transmission</RootNamespace>
+    <ProjectGuid>{7a3c2e41-5b8d-4f6a-9c1e-2d4b6f8a0c35}</ProjectGuid>
+    <RootNamespace>Transmission3D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -77,7 +77,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)$(MSBuildProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -119,8 +119,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,13 +137,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Breakout\Brick.cpp" />
-    <ClCompile Include="src\Breakout\PlayerPlatform.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -154,28 +150,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="res\LedasLuzta.ogg" />
-    <None Include="res\LedasLuzta2.ogg" />
-    <None Include="res\LedasLuzta33.ogg" />
-    <None Include="res\LedasLuzta4.ogg" />
-    <None Include="res\LedasLuzta5.ogg" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Breakout\BallMovement.h" />
-    <ClInclude Include="src\Breakout\Brick.h" />
-    <ClInclude Include="src\Breakout\BreakoutLayers.h" />
-    <ClInclude Include="src\Breakout\PlayerPlatform.h" />
-    <ClInclude Include="src\GameOverScene.h" />
-    <ClInclude Include="src\SampleScene.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="res\ice.png" />
-    <Image Include="res\ice_cracked.png" />
-    <Image Include="res\swirlstroke_red.png" />
-    <Image Include="res\wood.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="res\Roboto-Regular.ttf" />
+    <ClInclude Include="src\FlyCamera.h" />
+    <ClInclude Include="src\SampleScene3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

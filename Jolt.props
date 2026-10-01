@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Jolt via vcpkg manifest. One-time: `vcpkg integrate install` in Developer PowerShell. -->
+<!-- vcpkg manifest deps: Jolt, glad, glm, tinygltf. One-time: `vcpkg integrate install` in Developer PowerShell. -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>

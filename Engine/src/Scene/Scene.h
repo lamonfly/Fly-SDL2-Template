@@ -7,6 +7,8 @@
 #include "../Physics/RigidBody.h"
 #include "../Physics/Contact.h"
 
+class Renderer3D;
+
 // Interface for scene setup
 class Scene {
 public:
@@ -17,7 +19,8 @@ public:
 	virtual void Update(double deltaTime) = 0;
 	virtual void Render(SDL_Renderer* renderer) = 0;
 	virtual void HandleEvent(SDL_Event& e) = 0;
-	void UpdatePhysics(double deltaTime);
+	virtual void Render3D(Renderer3D& renderer) {}
+	virtual void UpdatePhysics(double deltaTime);
 
 	// Before first RigidBody
 	void SetPhysicsConfig(const PhysicsConfig& config);

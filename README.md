@@ -1,8 +1,8 @@
 # Fly-SDL2-Template
 
-A C++ game engine template built on SDL2, designed to give you a solid starting point for 2D games with an Entity-Component System (ECS) architecture, [Jolt Physics](https://github.com/jrouwe/JoltPhysics) for rigid bodies and collisions, and a modular scene framework.
+A C++ game engine template built on SDL2, designed to give you a solid starting point for 2D and 3D games with an Entity-Component System (ECS) architecture, [Jolt Physics](https://github.com/jrouwe/JoltPhysics) for rigid bodies and collisions, and a modular scene framework.
 
-The repository ships with a fully working **Breakout** clone called *Transmission* that demonstrates all major engine features.
+The repository ships with two demos: **Transmission2D**, a fully working Breakout clone for the 2D path, and **Transmission3D**, a falling-boxes-and-spheres scene with a fly camera for the 3D path.
 
 ---
 
@@ -17,7 +17,12 @@ The repository ships with a fully working **Breakout** clone called *Transmissio
   - **Contact events** per entity (`Enter`, `Stay`, `Exit`) with contact point and normal
   - **Continuous Collision Detection** per body (`UseCCD = true`, Jolt `LinearCast`) for fast-moving objects
   - Fixed 60 Hz time step with accumulator, multi-threaded solver, sensors, restitution/friction/damping/gravity factor per body
-- **Graphics** — `Sprite`, `Circle`, `Line`, `Text`, and `Texture` components rendered via `SDL_Renderer`
+- **Graphics (2D)** — `Sprite`, `Circle`, `Line`, `Text`, and `Texture` components rendered via `SDL_Renderer`
+- **3D path** — OpenGL 3.3 core (glad + glm) side by side with the 2D path, selected per process through `EngineConfig::Backend`
+  - `Scene3D` base class with its own `PhysicsWorld3D`: full 3D Jolt bodies (box, sphere, capsule, cylinder), meters, Y up
+  - `Transform3` (position, quaternion rotation, scale), `RigidBody3D`, `MeshRenderer` components
+  - `Renderer3D` forward renderer: one Blinn-Phong directional light, depth test, back-face culling, MSAA option
+  - In-code primitives (cube, box, sphere, plane, capsule) and glTF/GLB loading through tinygltf
 - **Audio** — SDL_mixer initialised at engine startup (44100 Hz, stereo)
 - **Event system** — `Eventable` interface; built-in `Grab` component for mouse-drag interactions
 - **Window management** — logical resolution (720 × 480 by default) independent of physical display size; resizable, maximised on launch; fullscreen toggle via **Enter**
@@ -36,7 +41,7 @@ The repository ships with a fully working **Breakout** clone called *Transmissio
 
 **NuGet packages used:** `sdl2.nuget`, `sdl2_image.nuget`, `sdl2_ttf.nuget`, `sdl2_mixer.nuget`, `fluid.entt`
 
-**vcpkg packages used:** `joltphysics` (first build compiles or downloads Jolt into `vcpkg_installed/`, which is git-ignored; `Jolt.dll` is copied next to the executable automatically)
+**vcpkg packages used:** `joltphysics`, `glad` (GL 3.3 loader), `glm`, `tinygltf` (first build compiles or downloads them into `vcpkg_installed/`, which is git-ignored; `Jolt.dll` is copied next to the executable automatically, the rest is static or header-only)
 
 ---
 
@@ -48,9 +53,9 @@ git clone https://github.com/your-username/Fly-SDL2-Template.git
 
 1. Once per machine, open a *Developer PowerShell for VS 2022* and run `vcpkg integrate install`.
 2. Open `GameTemplate.sln` in Visual Studio 2022.
-3. Right-click **Transmission** in Solution Explorer → *Set as Startup Project*.
+3. Right-click **Transmission2D** (or **Transmission3D**) in Solution Explorer → *Set as Startup Project*.
 4. Select the **x64 | Debug** configuration.
-5. Press **F5** — NuGet restores SDL2/EnTT, vcpkg installs Jolt, and the Breakout demo launches.
+5. Press **F5** — NuGet restores SDL2/EnTT, vcpkg installs Jolt, glad, glm and tinygltf, and the demo launches.
 
 ---
 
@@ -58,22 +63,31 @@ git clone https://github.com/your-username/Fly-SDL2-Template.git
 
 ```
 GameTemplate.sln
-├── vcpkg.json                # vcpkg manifest (Jolt Physics)
+├── vcpkg.json                # vcpkg manifest (Jolt Physics, glad, glm, tinygltf)
 ├── Jolt.props                # Shared MSBuild sheet: vcpkg manifest mode + C++ standard
 ├── Engine/                   # Static library (.lib) — the reusable game engine
 │   └── src/
-│       ├── Core/             # Engine singleton, Window
-│       ├── Scene/            # Scene base class (owns a PhysicsWorld), Camera
-│       ├── Physics/          # Transform, RigidBody, Contact, PhysicsWorld (Jolt wrapper),
-│       │                     # PhysicsConfig, CollisionLayer, Layers (Jolt layer filters), JoltGlobals
-│       ├── Graphics/         # Sprite, Circle, Line, Text, Texture
+│       ├── Core/             # Engine singleton, EngineConfig, Window (SDL_Renderer or GL context)
+│       ├── Scene/            # Scene (2D, owns a PhysicsWorld), Scene3D (owns a PhysicsWorld3D), Camera
+│       ├── Math/             # Transform3 (glm)
+│       ├── Physics/          # JoltWorld (shared Jolt lifecycle), PhysicsWorld + Transform/RigidBody/Contact (2D, pixels),
+│       │                     # PhysicsWorld3D + RigidBody3D/Contact3D/PhysicsConfig3D (3D, meters), JoltMath,
+│       │                     # CollisionLayer, Layers (Jolt layer filters), JoltGlobals
+│       ├── Graphics/         # Sprite, Circle, Line, Text, Texture (SDL_Renderer)
+│       ├── Graphics3D/       # Renderer3D, Shader, Mesh, TextureGL, Material, MeshRenderer, Camera3D,
+│       │                     # Primitives, GltfLoader, AssetCache (OpenGL)
 │       └── Event/            # Eventable interface, Grab component
-├── Transmission/             # Executable — the Breakout demo game
+├── Transmission2D/           # Executable — the Breakout demo game (2D)
 │   └── src/
 │       ├── Main.cpp          # Engine bootstrap
 │       ├── SampleScene.h     # Gameplay scene (bricks, ball, paddle)
 │       ├── GameOverScene.h   # Game-over screen
 │       └── Breakout/         # Game-specific components (BallMovement, Brick, PlayerPlatform)
+├── Transmission3D/           # Executable — the 3D demo
+│   └── src/
+│       ├── Main.cpp          # Engine bootstrap with RenderBackend::OpenGL3
+│       ├── SampleScene3D.h   # Floor, walls, falling boxes and spheres
+│       └── FlyCamera.h       # WASD + mouse look helper
 └── packages/                 # Restored NuGet packages
 ```
 
@@ -282,16 +296,114 @@ Press **Enter** at any time to toggle fullscreen.
 
 ---
 
-## Sample Game: Transmission
+## 3D Path
 
-*Transmission* is a Breakout clone included as the primary consumer of the engine. It demonstrates:
+The 3D path lives next to the 2D one. One backend is chosen per process in `Engine::Init`; nothing in `Engine/` changes for existing 2D games (`Init()` with no arguments keeps `SDL_Renderer`).
+
+Conventions: **meters**, **Y up**, right-handed, **-Z forward**. `Transform3::Position` is the body center (not a corner). No pixel conversion.
+
+### Bootstrap
+
+```cpp
+EngineConfig config;
+config.Backend = RenderBackend::OpenGL3;   // SDL_WINDOW_OPENGL + GL 3.3 core context, no SDL_Renderer
+config.MSAASamples = 4;                    // optional
+config.VSync = true;
+Engine::GetInstance()->Init(config);
+```
+
+In GL mode `Engine::Render` calls `Scene::Render3D(Renderer3D&)` on every active scene instead of `Scene::Render(SDL_Renderer*)`. A plain 2D `Scene` loaded in GL mode renders nothing.
+
+### Scene3D
+
+Subclass `Scene3D` instead of `Scene`. It owns a `PhysicsWorld3D`, a public `Camera3D Camera`, and connects `RigidBody3D` to Jolt the same way `Scene` does for `RigidBody`.
+
+```cpp
+#include "Scene/Scene3D.h"
+#include "Graphics3D/Renderer3D.h"
+#include "Graphics3D/MeshRenderer.h"
+#include "Graphics3D/Primitives.h"
+
+class MyScene3D : public Scene3D
+{
+public:
+    void Init() override
+    {
+        PhysicsConfig3D cfg;                      // Gravity (0, -9.81, 0) m/s^2
+        SetPhysicsConfig3D(cfg);
+
+        auto cube = Primitives::Make(Primitives::Cube(1.0f));
+        auto mat  = std::make_shared<Material>();
+        mat->BaseColor = { 0.8f, 0.3f, 0.2f, 1.0f };
+
+        // Static floor, 20 x 1 x 20 m. Transform3(position, scale)
+        auto floor = mRegistry.create();
+        mRegistry.emplace<Transform3>(floor, glm::vec3(0, -0.5f, 0), glm::vec3(20, 1, 20));
+        mRegistry.emplace<RigidBody3D>(floor, RigidBody3D::Box(glm::vec3(20, 1, 20), BodyType::Static));
+        mRegistry.emplace<MeshRenderer>(floor, cube, mat);
+
+        // Dynamic sphere
+        auto ball = mRegistry.create();
+        mRegistry.emplace<Transform3>(ball, glm::vec3(0, 5, 0), glm::vec3(0.3f));
+        auto body = RigidBody3D::Sphere(0.3f, BodyType::Dynamic);
+        body.Restitution = 0.5f;
+        auto& rb = mRegistry.emplace<RigidBody3D>(ball, body);
+        GetPhysics3D().SetLinearVelocity(rb, glm::vec3(1, 0, 0));   // m/s
+        mRegistry.emplace<MeshRenderer>(ball, Primitives::Make(Primitives::Sphere(1.0f)), mat);
+
+        Camera.Position = { 0, 4, 10 };
+        Camera.LookAt({ 0, 0, 0 });
+    }
+
+    void Update(double dt) override
+    {
+        for (const Contact3D& c : GetContacts3D(someEntity)) { /* c.Other, c.Point (m), c.Normal, c.Phase */ }
+    }
+
+    void Render3D(Renderer3D& r) override
+    {
+        r.Light.Direction = { -0.4f, -1.0f, -0.3f };
+        RenderMeshes(r);                          // draws every Transform3 + MeshRenderer
+    }
+
+    void HandleEvent(SDL_Event& e) override {}
+};
+```
+
+### Components and systems
+
+| Type | Description |
+|---|---|
+| `Transform3` | `glm::vec3 Position`, `glm::quat Rotation`, `glm::vec3 Scale`; `ToMatrix()`, `FromMatrix()`, `Forward()`. Physics ignores `Scale` |
+| `RigidBody3D` | `Box(size)`, `Sphere(r)`, `Capsule(r, halfHeight)`, `Cylinder(r, halfHeight)` factories; same `BodyType`, `Layer`/`CollidesWith`, restitution/friction/damping/CCD/sensor flags as `RigidBody`; `Mass` (0 = Jolt density default); `LockRotation` keeps translation only |
+| `MeshRenderer` | `shared_ptr<Mesh>`, `shared_ptr<Material>`, `Visible` |
+| `Material` | `BaseColor` (RGBA), optional `BaseColorTexture`, `DoubleSided` |
+| `Camera3D` | Position, yaw/pitch (degrees, yaw -90 looks down -Z), `FovY`, `Near`, `Far`; `GetView()`, `GetProjection(aspect)`, `LookAt()` |
+| `Renderer3D` | `BeginFrame(camera)`, `Draw(mesh, material, model)`, `EndFrame()`; public `Light` (direction, color, ambient) |
+| `Primitives` | `Cube`, `Box`, `Sphere`, `Plane`, `Capsule` return `MeshData`; `Make()` uploads to the GPU. Sizes match the Jolt shape parameters |
+| `GltfLoader` | `Load(path)` for `.gltf`/`.glb`: first triangle primitive per mesh, base color factor and texture, node transforms as `Instances` |
+| `AssetCache` | Scene-owned cache for meshes, textures and glTF models so GL objects die before the context |
+
+`PhysicsWorld3D` exposes `Set/GetLinearVelocity` (m/s), `Set/GetAngularVelocity` (rad/s), `AddForce`, `AddImpulse`, `AddTorque`, and raw Jolt access through `GetBodyInterface()`. Both worlds share `JoltWorld` (system setup, layers, contact listener, fixed-step accumulator); only the unit and dimension handling differ.
+
+Known limits of the first version: no sRGB/gamma handling, no shadows, no Jolt debug renderer (the vcpkg build has it off), one backend per process.
+
+### Transmission3D controls
+
+Left click captures the mouse for look, **WASD** move, **Q/E** down/up, **Shift** fast, **Space** throws a sphere, **Escape** releases the mouse then quits, **Enter** toggles fullscreen. Drop a `res/model.glb` next to the executable's working directory to see glTF loading.
+
+---
+
+## Sample Game: Transmission2D
+
+*Transmission2D* is a Breakout clone included as the primary consumer of the 2D path. It demonstrates:
 
 - **`SampleScene`** — game-specific layers in `Breakout/BreakoutLayers.h` (`Ball`, `Paddle`, `Brick`, `Wall`); a grid of static brick bodies with `Sprite` and a `Brick` behaviour component; a kinematic paddle driven by `PlayerPlatform` (keyboard-controlled); a dynamic ball (`Restitution = 1`, `Friction = 0`, CCD on) that Jolt bounces, with `BallMovement` speeding it up on every `Enter` contact
 - **`GameOverScene`** — a minimal scene with centred `Text`; pressing any key reloads `SampleScene`
 - Zero-gravity `PhysicsConfig`, contact events used for brick damage and the game-over trigger (ball touches the top wall)
 - Per-entity UV clipping to sample random sub-regions of a tileable texture atlas
 
-Run it out of the box by pressing **F5** in Visual Studio with **Transmission** set as the startup project.
+Run it out of the box by pressing **F5** in Visual Studio with **Transmission2D** set as the startup project.
 
 ---
 

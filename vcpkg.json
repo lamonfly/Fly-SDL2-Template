@@ -1,6 +1,9 @@
 {
   "dependencies": [
-    "joltphysics"
+    "joltphysics",
+    { "name": "glad", "features": [ "gl-api-33" ] },
+    "glm",
+    "tinygltf"
   ],
   "builtin-baseline": "eb2d3a3279fd019cb7733072d86900d0ad2a1aef"
 }
