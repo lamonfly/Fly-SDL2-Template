@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL_mixer.h>
 #include <SDL_ttf.h>
+#include "../Physics/JoltGlobals.h"
 
 Engine* Engine::sInstance = nullptr;
 
@@ -66,6 +67,9 @@ bool Engine::Init()
 					printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 					mRunning = false;
 				}
+
+				//Initialize Jolt Physics
+				JoltGlobals::Init();
 			}
 		}
 	}
@@ -88,7 +92,11 @@ void Engine::LoadScene(const std::string& identifier, const std::string& activeI
 void Engine::RemoveScene(const std::string& activeId)
 {
 	tasks.push_back([activeId, this]() {
-		mActiveScenes.erase(activeId);
+		auto it = mActiveScenes.find(activeId);
+		if (it != mActiveScenes.end()) {
+			delete it->second;
+			mActiveScenes.erase(it);
+		}
 	});
 }
 
@@ -163,6 +171,13 @@ void Engine::Events()
 
 bool Engine::Clean()
 {
+	//Destroy scenes before Jolt
+	for (auto& scene : mActiveScenes) {
+		delete scene.second;
+	}
+	mActiveScenes.clear();
+	JoltGlobals::Shutdown();
+
 	//Destroy window
 	mWindow->Free();
 

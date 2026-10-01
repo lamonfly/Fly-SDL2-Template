@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -57,6 +57,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
+    <Import Project="$(SolutionDir)Jolt.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -150,13 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Physics\CCD.cpp" />
-    <ClCompile Include="src\Physics\Collider\Shapes\CircleShape.cpp" />
-    <ClCompile Include="src\Physics\Collider\ColliderTools.cpp" />
+    <ClCompile Include="src\Physics\JoltGlobals.cpp" />
+    <ClCompile Include="src\Physics\PhysicsWorld.cpp" />
     <ClCompile Include="src\Event\Grab.cpp" />
     <ClCompile Include="src\Graphics\Circle.cpp" />
     <ClCompile Include="src\Graphics\Line.cpp" />
-    <ClCompile Include="src\Physics\Collider\Shapes\RectShape.cpp" />
     <ClCompile Include="src\Scene\Camera.cpp" />
     <ClCompile Include="src\Core\Engine.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
@@ -166,28 +165,19 @@
     <ClCompile Include="src\Graphics\Text.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Physics\CCD.h" />
-    <ClInclude Include="src\Physics\Collider\BoundingVolumes\AABB.h" />
-    <ClInclude Include="src\Physics\Collider\BoundingVolumes\BoundingSphere.h" />
-    <ClInclude Include="src\Physics\Collider\BroadPhase.h" />
-    <ClInclude Include="src\Physics\Collider\ColliderTools.h" />
-    <ClInclude Include="src\Physics\Collider\CollisionLayer.h" />
-    <ClInclude Include="src\Physics\Collider\Shapes\CircleShape.h" />
-    <ClInclude Include="src\Physics\Collider\Collider.h" />
+    <ClInclude Include="src\Physics\CollisionLayer.h" />
+    <ClInclude Include="src\Physics\Contact.h" />
+    <ClInclude Include="src\Physics\JoltGlobals.h" />
+    <ClInclude Include="src\Physics\Layers.h" />
+    <ClInclude Include="src\Physics\PhysicsConfig.h" />
+    <ClInclude Include="src\Physics\PhysicsWorld.h" />
+    <ClInclude Include="src\Physics\RigidBody.h" />
     <ClInclude Include="src\Event\Eventable.h" />
     <ClInclude Include="src\Event\Grab.h" />
     <ClInclude Include="src\Graphics\Circle.h" />
     <ClInclude Include="src\Graphics\Line.h" />
     <ClInclude Include="src\Graphics\Renderable.h" />
-    <ClInclude Include="src\Physics\Collider\Collision.h" />
-    <ClInclude Include="src\Physics\Collider\Shapes\RectShape.h" />
-    <ClInclude Include="src\Physics\Collider\Shapes\Shape.h" />
-    <ClInclude Include="src\Physics\SpatialPartitioning\ISpatialPartition.h" />
-    <ClInclude Include="src\Physics\SpatialPartitioning\QuadTree.h" />
-    <ClInclude Include="src\Physics\SpatialPartitioning\SpatialGrid.h" />
-    <ClInclude Include="src\Physics\SpatialPartitioning\SpatialPartitionConfig.h" />
     <ClInclude Include="src\Physics\Updateable.h" />
-    <ClInclude Include="src\Physics\Velocity.h" />
     <ClInclude Include="src\Scene\Camera.h" />
     <ClInclude Include="src\Physics\Transform.h" />
     <ClInclude Include="src\Core\Engine.h" />

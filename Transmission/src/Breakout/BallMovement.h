@@ -1,18 +1,10 @@
 #pragma once
-#include <Physics/Vector2.h>
-#include <Physics/Transform.h>
-#include <Event/Eventable.h>
-#include <SDL_mixer.h>
-#include <vector>
 
-class BallMovement : Eventable
+struct BallMovement
 {
-private:
-	Vector2 Velocity;
-	float Speed = 150;
-public:
-	void HandleEvent(SDL_Event& e) override;
-	void UpdateMove(double deltaTime, Transform& transform);
-	void Reflect(Vector2 normal);
-};
+	float Speed = 150.0f;      // px/s
+	float SpinDegPerSec = 100.0f;
+	bool Launched = false;
 
+	void OnBounce() { Speed *= 1.01f; }
+};

@@ -3,36 +3,32 @@
 
 // Components
 #include <Physics/Transform.h>
-#include <Physics/Collider/Collider.h>
-#include <Physics/Collider/CollisionLayer.h>
-#include <Physics/Collider/Shapes/RectShape.h>
-#include <Physics/Collider/Shapes/CircleShape.h>
-#include <Physics/SpatialPartitioning/SpatialPartitionConfig.h>
+#include <Physics/RigidBody.h>
+#include <Physics/PhysicsConfig.h>
 #include <Graphics/Sprite.h>
 #include <Graphics/Circle.h>
 #include <Graphics/Text.h>
+#include "Breakout/BreakoutLayers.h"
 #include "Breakout/PlayerPlatform.h"
 #include "Breakout/BallMovement.h"
 #include "Breakout/Brick.h"
 
-class SampleScene : public Scene 
+class SampleScene : public Scene
 {
 private:
 	Texture* brickBrokenTex = new Texture();
-	int32_t topWallID;
+	entt::entity topWall = entt::null;
 public:
 
-	void Init() override  
+	void Init() override
 	{
 		int windowHeight = Engine::GetInstance()->GetWindow()->GetResolutionHeight();
 		int windowWidth = Engine::GetInstance()->GetWindow()->GetResolutionWidth();
 
-		SpatialPartitionConfig spatialConfig;
-		spatialConfig.Strategy = SpatialPartitionStrategy::Grid;
-		spatialConfig.WorldSize = Vector2(windowWidth, windowHeight);
-		spatialConfig.GridCellSize = 80.0f;
-		spatialConfig.SeparateStaticDynamic = true;
-		SetSpatialPartitionConfig(spatialConfig);
+		//Physics
+		PhysicsConfig physicsConfig;
+		physicsConfig.Gravity = Vector2(0.0f, 0.0f);
+		SetPhysicsConfig(physicsConfig);
 
 		//Bricks values
 		float brickTotalHeight = windowHeight / 3;
@@ -46,7 +42,7 @@ public:
 		float brickWidth = (float)(windowWidth - brickSpacing * (brickCountWidth + 1)) / brickCountWidth;
 
 		//Texture
-		auto brickTex = new Texture(); 
+		auto brickTex = new Texture();
 		brickTex->LoadFromFile("res/ice.png");
 		brickTex->SetAlpha(127.5);
 		brickTex->SetSize(brickWidth, brickHeight);
@@ -54,8 +50,6 @@ public:
 		brickBrokenTex->LoadFromFile("res/ice_cracked.png");
 		brickBrokenTex->SetAlpha(127.5);
 		brickBrokenTex->SetSize(brickWidth, brickHeight);
-
-		auto shape = new RectShape(Vector2(brickWidth, brickHeight));
 
 		for (float h = windowHeight - brickHeight - brickSpacing; h >= (windowHeight - brickTotalHeight); h -= (brickHeight + brickSpacing)) {
 			for (float w = brickSpacing; w <= windowWidth; w += (brickWidth + brickSpacing)) {
@@ -65,10 +59,10 @@ public:
 				int hTex = rand() % static_cast<int>(1024 - brickHeight * textureMul);
 				SDL_Rect* clip = new SDL_Rect{ wTex, hTex, wTex + static_cast<int>(brickWidth * textureMul), hTex + static_cast<int>(brickHeight * textureMul) };
 				mRegistry.emplace<Sprite>(brick, brickTex).SetClip(clip);
-				auto& brickCollider = mRegistry.emplace<Collider>(brick, shape);
-				brickCollider.IsStatic = true;
-				brickCollider.Layer = CollisionLayer::World;
-				brickCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
+				auto brickBody = RigidBody::Box(Vector2(brickWidth, brickHeight), BodyType::Static);
+				brickBody.Layer = BreakoutLayer::Brick;
+				brickBody.CollidesWith = BreakoutLayer::Ball;
+				mRegistry.emplace<RigidBody>(brick, brickBody);
 				mRegistry.emplace<Brick>(brick);
 			}
 		}
@@ -78,9 +72,10 @@ public:
 
 		auto platform = mRegistry.create();
 		mRegistry.emplace<Transform>(platform, Vector2((float)(windowWidth - platformWidth) / 2, brickSpacing));
-		auto& platformCollider = mRegistry.emplace<Collider>(platform, new RectShape(Vector2(platformWidth, brickHeight)));
-		platformCollider.Layer = CollisionLayer::Player;
-		platformCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
+		auto platformBody = RigidBody::Box(Vector2(platformWidth, brickHeight), BodyType::Kinematic);
+		platformBody.Layer = BreakoutLayer::Paddle;
+		platformBody.CollidesWith = BreakoutLayer::Ball;
+		mRegistry.emplace<RigidBody>(platform, platformBody);
 		mRegistry.emplace<PlayerPlatform>(platform, windowWidth - platformWidth);
 
 		//Texture
@@ -92,11 +87,14 @@ public:
 		//Ball values
 		auto ball = mRegistry.create();
 		mRegistry.emplace<Transform>(ball, Vector2(windowWidth/ 2, brickHeight + brickSpacing + 10));
-		auto& ballCollider = mRegistry.emplace<Collider>(ball, new CircleShape(6));
-		ballCollider.Layer = CollisionLayer::Projectile;
-		ballCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::World | CollisionLayer::Player);
-		ballCollider.UseCCD = true;
-		ballCollider.CCDSpeedThreshold = 200.0f;
+		auto ballBody = RigidBody::Circle(6, BodyType::Dynamic);
+		ballBody.Layer = BreakoutLayer::Ball;
+		ballBody.CollidesWith = BreakoutLayer::Brick | BreakoutLayer::Wall | BreakoutLayer::Paddle;
+		ballBody.Restitution = 1.0f;
+		ballBody.Friction = 0.0f;
+		ballBody.AllowSleeping = false;
+		ballBody.UseCCD = true;
+		mRegistry.emplace<RigidBody>(ball, ballBody);
 		mRegistry.emplace<BallMovement>(ball);
 
 		//Texture
@@ -106,31 +104,19 @@ public:
 		mRegistry.emplace<Sprite>(ball, ballTex);
 
 		//Walls
-		auto leftWall = mRegistry.create();
-		mRegistry.emplace<Transform>(leftWall, Vector2(-10, 0));
-		auto& leftWallCollider = mRegistry.emplace<Collider>(leftWall, new RectShape(Vector2(10, windowHeight)));
-		leftWallCollider.IsStatic = true;
-		leftWallCollider.Layer = CollisionLayer::World;
-		leftWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
-		auto rightWall = mRegistry.create();
-		mRegistry.emplace<Transform>(rightWall, Vector2(windowWidth + 1, 0));
-		auto& rightWallCollider = mRegistry.emplace<Collider>(rightWall, new RectShape(Vector2(10, windowHeight)));
-		rightWallCollider.IsStatic = true;
-		rightWallCollider.Layer = CollisionLayer::World;
-		rightWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
-		auto bottomWall = mRegistry.create();
-		mRegistry.emplace<Transform>(bottomWall, Vector2(-10, windowHeight));
-		auto& bottomWallCollider = mRegistry.emplace<Collider>(bottomWall, new RectShape(Vector2(windowWidth + 20, 10)));
-		bottomWallCollider.IsStatic = true;
-		bottomWallCollider.Layer = CollisionLayer::World;
-		bottomWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
-		auto topWall = mRegistry.create();
-		mRegistry.emplace<Transform>(topWall, Vector2(-10, -25));
-		auto& topWallCollider = mRegistry.emplace<Collider>(topWall, new RectShape(Vector2(windowWidth + 50, 10)));
-		topWallCollider.IsStatic = true;
-		topWallCollider.Layer = CollisionLayer::World;
-		topWallCollider.CollidesWith = static_cast<uint16_t>(CollisionLayer::Projectile);
-		topWallID = entt::to_integral(topWall);
+		auto makeWall = [&](Vector2 position, Vector2 size) {
+			auto wall = mRegistry.create();
+			mRegistry.emplace<Transform>(wall, position);
+			auto wallBody = RigidBody::Box(size, BodyType::Static);
+			wallBody.Layer = BreakoutLayer::Wall;
+			wallBody.CollidesWith = BreakoutLayer::Ball;
+			mRegistry.emplace<RigidBody>(wall, wallBody);
+			return wall;
+		};
+		makeWall(Vector2(-10, 0), Vector2(10, windowHeight));                        // left
+		makeWall(Vector2(windowWidth + 1, 0), Vector2(10, windowHeight));            // right
+		makeWall(Vector2(-10, windowHeight), Vector2(windowWidth + 20, 10));         // bottom
+		topWall = makeWall(Vector2(-10, -25), Vector2(windowWidth + 50, 10));        // top
 
 		entt::entity sampleText = mRegistry.create();
 		auto textTex = new Texture();
@@ -154,40 +140,40 @@ public:
 		}
 
 		// Update ball
-		for (auto&& [entity, transform, ballMovement, collider] : mRegistry.view<Transform, BallMovement, Collider>().each()) {
-			ballMovement.UpdateMove(deltaTime, transform);
-
-			// Rotate ball
-			transform.setRotation(transform.getRotation() + 100.f * deltaTime);
-
-			for (auto collision : collider.GetCollisions()) {
-				if (collider.HasEntered(collision.first)) {
-					ballMovement.Reflect(collision.second->Normal);
-				}
+		for (auto&& [entity, ballMovement, body] : mRegistry.view<BallMovement, RigidBody>().each()) {
+			for (const Contact& contact : GetContacts(entity)) {
+				if (contact.Phase != ContactPhase::Enter) continue;
 
 				// End game
-				if (collision.first == topWallID) {
+				if (contact.Other == topWall) {
 					Engine::GetInstance()->RemoveScene("SampleScene");
 					Engine::GetInstance()->LoadScene("GameOverScene", "GameOverScene");
+					break;
 				}
+
+				// Speed up
+				ballMovement.OnBounce();
+				Vector2 direction = GetPhysics().GetLinearVelocity(body).Normalized();
+				GetPhysics().SetLinearVelocity(body, direction * ballMovement.Speed);
 			}
 		}
 
 		// Update bricks
-		for (auto&& [entity, transform, brick, collider] : mRegistry.view<Transform, Brick, Collider>().each()) {
-			for (auto collision : collider.GetCollisions()) {
-				if (collider.HasEntered(collision.first)) {
-					brick.TakeDamage();
-					if (brick.Health < 0) {
-						// Remove entity
-						mRegistry.remove<Transform>(entity);
-						mRegistry.remove<Collider>(entity);
-						mRegistry.remove<Brick>(entity);
-					}
-					else {
-						// Replace texture
-						mRegistry.get<Sprite>(entity).SetTexture(brickBrokenTex);
-					}
+		for (auto&& [entity, transform, brick, body] : mRegistry.view<Transform, Brick, RigidBody>().each()) {
+			for (const Contact& contact : GetContacts(entity)) {
+				if (contact.Phase != ContactPhase::Enter) continue;
+
+				brick.TakeDamage();
+				if (brick.Health < 0) {
+					// Remove entity
+					mRegistry.remove<Transform>(entity);
+					mRegistry.remove<RigidBody>(entity);
+					mRegistry.remove<Brick>(entity);
+					break;
+				}
+				else {
+					// Replace texture
+					mRegistry.get<Sprite>(entity).SetTexture(brickBrokenTex);
 				}
 			}
 		}
@@ -199,7 +185,16 @@ public:
 			playerPlatform.HandleEvent(e, transform);
 		}
 
-		HandleEventType<BallMovement>(e);
+		// Launch ball
+		if (e.type == SDL_KEYDOWN) {
+			for (auto&& [entity, ballMovement, body] : mRegistry.view<BallMovement, RigidBody>().each()) {
+				if (ballMovement.Launched) continue;
+				ballMovement.Launched = true;
+				Vector2 direction = Vector2(rand() % 201 + (-100), rand() % 101).Normalized();
+				GetPhysics().SetLinearVelocity(body, direction * ballMovement.Speed);
+				GetPhysics().SetAngularVelocity(body, ballMovement.SpinDegPerSec);
+			}
+		}
 
 		for (auto&& [entity, text] : mRegistry.view<Text>().each()) {
 			if (e.type == SDL_KEYDOWN) {

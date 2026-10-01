@@ -429,3 +429,6 @@ FodyWeavers.xsd
 *.exe
 *.out
 *.app
+
+# vcpkg manifest-mode output (Jolt Physics)
+vcpkg_installed/

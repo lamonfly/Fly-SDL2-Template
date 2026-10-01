@@ -2,12 +2,15 @@
 #include <SDL.h>
 #include <entt/entt.hpp>
 #include "../Physics/Transform.h"
-#include "../Physics/Collider/BroadPhase.h"
-#include "../Physics/SpatialPartitioning/SpatialPartitionConfig.h"
+#include "../Physics/PhysicsWorld.h"
+#include "../Physics/PhysicsConfig.h"
+#include "../Physics/RigidBody.h"
+#include "../Physics/Contact.h"
 
 // Interface for scene setup
 class Scene {
 public:
+	Scene();
 	virtual ~Scene();
 
 	virtual void Init() = 0;
@@ -16,12 +19,19 @@ public:
 	virtual void HandleEvent(SDL_Event& e) = 0;
 	void UpdatePhysics(double deltaTime);
 
-	void SetSpatialPartitionConfig(const SpatialPartitionConfig& config);
-	const SpatialPartitionConfig& GetSpatialPartitionConfig() const;
+	// Before first RigidBody
+	void SetPhysicsConfig(const PhysicsConfig& config);
+	const PhysicsConfig& GetPhysicsConfig() const;
+
+	// Contacts from last UpdatePhysics
+	const std::vector<Contact>& GetContacts(entt::entity entity) const;
+
+	PhysicsWorld& GetPhysics() { return mPhysics; }
 
 protected:
+	PhysicsWorld mPhysics;   // destroyed after mRegistry
 	entt::registry mRegistry;
-	BroadPhase mBroadPhase;
+	PhysicsWorld::ContactMap mContacts;
 
 	template<typename T> inline void RenderType(SDL_Renderer* renderer) {
 		for (auto&& [entity, transform, type] : mRegistry.view<Transform, T>().each()) {
@@ -40,4 +50,8 @@ protected:
 			type.HandleEvent(currentEvent);
 		}
 	}
+
+private:
+	void OnRigidBodyConstruct(entt::registry& registry, entt::entity entity);
+	void OnRigidBodyDestroy(entt::registry& registry, entt::entity entity);
 };

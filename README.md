@@ -1,6 +1,6 @@
 # Fly-SDL2-Template
 
-A C++ game engine template built on SDL2, designed to give you a solid starting point for 2D games with an Entity-Component System (ECS) architecture, a physics/collision system, and a modular scene framework.
+A C++ game engine template built on SDL2, designed to give you a solid starting point for 2D games with an Entity-Component System (ECS) architecture, [Jolt Physics](https://github.com/jrouwe/JoltPhysics) for rigid bodies and collisions, and a modular scene framework.
 
 The repository ships with a fully working **Breakout** clone called *Transmission* that demonstrates all major engine features.
 
@@ -10,12 +10,13 @@ The repository ships with a fully working **Breakout** clone called *Transmissio
 
 - **Entity-Component System** via [EnTT](https://github.com/skypjack/entt) — per-scene ECS registries with type-safe component access
 - **Scene system** — multiple scenes can be active simultaneously; scenes can be loaded, replaced, and removed at runtime through a deferred task queue (safe to call from within `Update` or `HandleEvent`)
-- **Physics & collisions**
-  - `Transform` (position, rotation, scale, size) and `Velocity` components
-  - `Collider` with `RectShape` and `CircleShape`
-  - Bitmasked **collision layers** (`Default`, `Player`, `Enemy`, `Projectile`, `World`, `Trigger`, `PowerUp`, `Debris`)
-  - **Continuous Collision Detection (CCD)** — sweep tests (`Circle–Circle`, `Circle–AABB`, `AABB–AABB`) for fast-moving objects
-  - **Broad phase** with pluggable **spatial partitioning** (`SpatialGrid` or `QuadTree`), optional static/dynamic separation for better performance
+- **Physics & collisions** via [Jolt Physics](https://github.com/jrouwe/JoltPhysics) (MIT) — one `PhysicsWorld` per scene
+  - `Transform` (position, rotation, scale, size) and `RigidBody` (box or circle; static, kinematic or dynamic) components
+  - 2D simulation on a 3D engine: bodies are locked to the XY plane (`EAllowedDOFs::Plane2D`), so a later move to 3D keeps the same library
+  - **Game-defined collision layers**: 32-bit `Layer` / `CollidesWith` masks per body, declared by each project (the engine ships optional defaults); mapped onto Jolt object layers automatically
+  - **Contact events** per entity (`Enter`, `Stay`, `Exit`) with contact point and normal
+  - **Continuous Collision Detection** per body (`UseCCD = true`, Jolt `LinearCast`) for fast-moving objects
+  - Fixed 60 Hz time step with accumulator, multi-threaded solver, sensors, restitution/friction/damping/gravity factor per body
 - **Graphics** — `Sprite`, `Circle`, `Line`, `Text`, and `Texture` components rendered via `SDL_Renderer`
 - **Audio** — SDL_mixer initialised at engine startup (44100 Hz, stereo)
 - **Event system** — `Eventable` interface; built-in `Grab` component for mouse-drag interactions
@@ -28,11 +29,14 @@ The repository ships with a fully working **Breakout** clone called *Transmissio
 
 | Requirement | Notes |
 |---|---|
-| Visual Studio 2022 (v143) | Windows only |
+| Visual Studio 2022 (v143) | Windows only. Install the **Desktop development with C++** workload, which includes vcpkg |
 | x64 architecture | |
-| NuGet | Packages restore automatically on first build — no manual steps needed |
+| NuGet | SDL2 and EnTT restore automatically on first build |
+| vcpkg (bundled with VS 2022) | Jolt Physics is pulled through `vcpkg.json` (manifest mode). One-time setup per machine, from a **Developer PowerShell for VS 2022**: `vcpkg integrate install` |
 
 **NuGet packages used:** `sdl2.nuget`, `sdl2_image.nuget`, `sdl2_ttf.nuget`, `sdl2_mixer.nuget`, `fluid.entt`
+
+**vcpkg packages used:** `joltphysics` (first build compiles or downloads Jolt into `vcpkg_installed/`, which is git-ignored; `Jolt.dll` is copied next to the executable automatically)
 
 ---
 
@@ -42,10 +46,11 @@ The repository ships with a fully working **Breakout** clone called *Transmissio
 git clone https://github.com/your-username/Fly-SDL2-Template.git
 ```
 
-1. Open `GameTemplate.sln` in Visual Studio 2022.
-2. Right-click **Transmission** in Solution Explorer → *Set as Startup Project*.
-3. Select the **x64 | Debug** configuration.
-4. Press **F5** — NuGet restores all packages and the Breakout demo launches.
+1. Once per machine, open a *Developer PowerShell for VS 2022* and run `vcpkg integrate install`.
+2. Open `GameTemplate.sln` in Visual Studio 2022.
+3. Right-click **Transmission** in Solution Explorer → *Set as Startup Project*.
+4. Select the **x64 | Debug** configuration.
+5. Press **F5** — NuGet restores SDL2/EnTT, vcpkg installs Jolt, and the Breakout demo launches.
 
 ---
 
@@ -53,12 +58,14 @@ git clone https://github.com/your-username/Fly-SDL2-Template.git
 
 ```
 GameTemplate.sln
+├── vcpkg.json                # vcpkg manifest (Jolt Physics)
+├── Jolt.props                # Shared MSBuild sheet: vcpkg manifest mode + C++ standard
 ├── Engine/                   # Static library (.lib) — the reusable game engine
 │   └── src/
 │       ├── Core/             # Engine singleton, Window
-│       ├── Scene/            # Scene base class, Camera
-│       ├── Physics/          # Transform, Velocity, Collider, CCD, spatial partitioning
-│       │   └── Collider/     # Collider, shapes (Rect/Circle), collision layers, broad phase
+│       ├── Scene/            # Scene base class (owns a PhysicsWorld), Camera
+│       ├── Physics/          # Transform, RigidBody, Contact, PhysicsWorld (Jolt wrapper),
+│       │                     # PhysicsConfig, CollisionLayer, Layers (Jolt layer filters), JoltGlobals
 │       ├── Graphics/         # Sprite, Circle, Line, Text, Texture
 │       └── Event/            # Eventable interface, Grab component
 ├── Transmission/             # Executable — the Breakout demo game
@@ -81,11 +88,9 @@ Subclass `Scene` and implement the four pure-virtual methods. The base class exp
 ```cpp
 #include "Scene/Scene.h"
 #include <Physics/Transform.h>
-#include <Physics/Velocity.h>
-#include <Physics/Collider/Collider.h>
-#include <Physics/Collider/Shapes/RectShape.h>
-#include <Physics/Collider/CollisionLayer.h>
-#include <Physics/SpatialPartitioning/SpatialPartitionConfig.h>
+#include <Physics/RigidBody.h>
+#include <Physics/CollisionLayer.h>
+#include <Physics/PhysicsConfig.h>
 #include <Graphics/Sprite.h>
 
 class MyScene : public Scene
@@ -93,26 +98,38 @@ class MyScene : public Scene
 public:
     void Init() override
     {
-        // Configure spatial partitioning (optional — defaults to a 64px grid)
-        SpatialPartitionConfig cfg;
-        cfg.Strategy              = SpatialPartitionStrategy::Grid;
-        cfg.WorldSize             = Vector2(1280, 720);
-        cfg.GridCellSize          = 64.0f;
-        cfg.SeparateStaticDynamic = true;
-        SetSpatialPartitionConfig(cfg);
+        // Configure physics (optional — must happen before the first RigidBody)
+        PhysicsConfig cfg;
+        cfg.PixelsPerMeter = 32.0f;            // Jolt works in meters
+        cfg.Gravity        = Vector2(0, 9.81f); // Y down, like SDL
+        SetPhysicsConfig(cfg);
 
-        // Create a static wall entity
+        // Create a static wall entity (Transform first, then RigidBody)
         auto wall = mRegistry.create();
         mRegistry.emplace<Transform>(wall, Vector2(0.0f, 680.0f));
-        auto& col = mRegistry.emplace<Collider>(wall, new RectShape(Vector2(1280, 32)));
-        col.IsStatic     = true;
-        col.Layer        = CollisionLayer::World;
-        col.CollidesWith = static_cast<uint16_t>(CollisionLayer::Player | CollisionLayer::Projectile);
+        auto body = RigidBody::Box(Vector2(1280, 32), BodyType::Static);
+        body.Layer        = CollisionLayer::Default;   // or your own game layers, see below
+        body.CollidesWith = CollisionLayer::All;
+        mRegistry.emplace<RigidBody>(wall, body); // Jolt body is created automatically
+
+        // A bouncing dynamic ball
+        auto ball = mRegistry.create();
+        mRegistry.emplace<Transform>(ball, Vector2(600.0f, 100.0f));
+        auto ballBody = RigidBody::Circle(8.0f, BodyType::Dynamic);
+        ballBody.Restitution = 0.8f;
+        ballBody.UseCCD      = true;
+        mRegistry.emplace<RigidBody>(ball, ballBody);
+        GetPhysics().SetLinearVelocity(mRegistry.get<RigidBody>(ball), Vector2(120.0f, 0.0f)); // px/s
     }
 
     void Update(double deltaTime) override
     {
-        UpdatePhysics(deltaTime);          // runs broad phase + collision resolution
+        // Engine::Update already called UpdatePhysics; read the results here
+        for (auto&& [entity, body] : mRegistry.view<RigidBody>().each()) {
+            for (const Contact& c : GetContacts(entity)) {
+                if (c.Phase == ContactPhase::Enter) { /* c.Other, c.Point (px), c.Normal */ }
+            }
+        }
         UpdateType<MyBehavior>(deltaTime); // calls MyBehavior::Update on every entity that has one
     }
 
@@ -183,38 +200,49 @@ Each `Scene` owns an `entt::registry`. Entities are opaque integers; behaviour i
 ### Scene Management
 `Engine::AddScene<T>("id")` registers a factory for scene `T`. `LoadScene("id", "activeId")` constructs and initialises a new instance; `RemoveScene("id")` destroys it. All scene operations are deferred to the end of the current frame, so it is safe to trigger them from any context.
 
-### Physics
+### Physics (Jolt)
+Each `Scene` owns a `PhysicsWorld` wrapping a `JPH::PhysicsSystem`. `Engine::Update` calls `Scene::UpdatePhysics` before `Scene::Update` every frame.
+
 | Component | Description |
 |---|---|
-| `Transform` | Position (`Vector2`), rotation (0–360°), scale, and size |
-| `Velocity` | `Vector2` applied to `Transform::Position` each frame |
-| `Collider` | Wraps a `Shape*`; set `IsStatic = true` for immovable geometry |
+| `Transform` | Position (`Vector2`, top-left corner in pixels), rotation (0–360°, clockwise), scale, and size |
+| `RigidBody` | Box or circle body. `BodyType::Static` never moves, `Kinematic` follows the `Transform` you write, `Dynamic` is simulated and writes the `Transform` back |
 
-Collision filtering is done with two bitmask fields on `Collider`:
+Body lifecycle is automatic: `mRegistry.emplace<RigidBody>(entity, ...)` creates the Jolt body (the entity must already have a `Transform`), and `remove<RigidBody>` / `destroy(entity)` destroys it.
+
+Per-body settings: `Restitution`, `Friction`, `LinearDamping`, `AngularDamping`, `GravityFactor`, `UseCCD`, `IsSensor`, `AllowSleeping`, `LockRotation`.
+
+#### Collision layers
+Filtering uses two 32-bit masks per body. Two bodies collide when `(A.Layer & B.CollidesWith) && (B.Layer & A.CollidesWith)`. The engine attaches no meaning to the bits, so **each game declares its own layers** without touching `Engine/`:
 
 ```cpp
-col.Layer        = CollisionLayer::Player;
-col.CollidesWith = static_cast<uint16_t>(CollisionLayer::World | CollisionLayer::Enemy);
+// MyGame/src/MyLayers.h
+namespace MyLayer { enum : uint32_t { Ship = 1 << 0, Asteroid = 1 << 1, Bullet = 1 << 2 }; }
+
+body.Layer        = MyLayer::Bullet;
+body.CollidesWith = MyLayer::Asteroid | MyLayer::Ship;   // unscoped enum: no casts needed
 ```
 
-### Continuous Collision Detection (CCD)
-Enable per-collider with `UseCCD = true` and tune `CCDSpeedThreshold` (pixels/second). When an entity exceeds the threshold, `UpdatePhysics` uses one of three sweep tests instead of a discrete overlap check:
+`Physics/CollisionLayer.h` ships Unity's built-in layers at the same indices (`CollisionLayer::Default` 0, `TransparentFX` 1, `IgnoreRaycast` 2, `Water` 4, `UI` 5, plus `All` and `None`); bits 6 to 31 are free for games, Godot-style, through `LayerBit(n)`. Up to 32 layers. Internally every distinct `(Layer, CollidesWith, static?)` combination is interned into a Jolt `ObjectLayer` (`Physics/Layers.h`); static bodies go to the static broad-phase layer, everything else to the moving one.
 
-| Method | Typical use |
+Velocity is read and written in pixels per second through the world: `GetPhysics().SetLinearVelocity(body, v)`, `GetLinearVelocity(body)`, `SetAngularVelocity(body, degPerSec)`. `GetPhysics().GetBodyInterface()` exposes raw Jolt when needed.
+
+### Contacts
+`GetContacts(entity)` returns the `Contact` list produced during the last `UpdatePhysics`:
+
+| Field | Meaning |
 |---|---|
-| `CCD::SweepCircleCircle` | Ball vs ball |
-| `CCD::SweepCircleAABB` | Ball vs rectangular obstacle |
-| `CCD::SweepAABBAABB` | Box vs box |
+| `Other` | The other entity |
+| `Point` | Contact point in pixels (average of the manifold) |
+| `Normal` | Unit normal from this entity towards `Other` |
+| `Phase` | `Enter` (new this frame), `Stay`, `Exit` (ended; `Point`/`Normal` are zero) |
 
-### Spatial Partitioning
-Configured via `SpatialPartitionConfig` before the scene finishes `Init`:
+Contacts are collected on Jolt worker threads and handed out after the step, so game code never runs inside Jolt callbacks.
 
-| Strategy | Class | Best for |
-|---|---|---|
-| `SpatialPartitionStrategy::Grid` | `SpatialGrid` | Uniformly distributed objects |
-| `SpatialPartitionStrategy::QuadTree` | `QuadTree` | Clustered or sparse worlds |
+### Units, time step and CCD
+`PhysicsConfig` (set with `SetPhysicsConfig` before the first body) holds `PixelsPerMeter` (default 32), `Gravity` (m/s², Y down), `FixedTimeStep` (1/60 s), `MaxSubSteps` (4) and the Jolt capacity limits. The world steps in fixed increments from an accumulator, so rendering frame rate does not affect simulation.
 
-`SeparateStaticDynamic = true` builds a second partition for static colliders so they are never re-inserted on moving frames.
+Set `UseCCD = true` on fast dynamic bodies; Jolt then uses `LinearCast` motion quality to prevent tunnelling.
 
 ### Graphics
 All renderable types implement `Renderable` and expose `Render(SDL_Renderer*, Transform)`:
@@ -258,9 +286,9 @@ Press **Enter** at any time to toggle fullscreen.
 
 *Transmission* is a Breakout clone included as the primary consumer of the engine. It demonstrates:
 
-- **`SampleScene`** — a grid of brick entities with `Sprite`, `Collider` (static, `World` layer), and a `Brick` behaviour component; a paddle driven by `PlayerPlatform` (keyboard-controlled); a ball with `BallMovement` and CCD enabled (`CCDSpeedThreshold = 200`)
+- **`SampleScene`** — game-specific layers in `Breakout/BreakoutLayers.h` (`Ball`, `Paddle`, `Brick`, `Wall`); a grid of static brick bodies with `Sprite` and a `Brick` behaviour component; a kinematic paddle driven by `PlayerPlatform` (keyboard-controlled); a dynamic ball (`Restitution = 1`, `Friction = 0`, CCD on) that Jolt bounces, with `BallMovement` speeding it up on every `Enter` contact
 - **`GameOverScene`** — a minimal scene with centred `Text`; pressing any key reloads `SampleScene`
-- A `SpatialGrid` with static/dynamic separation for efficient per-frame collision queries across many brick entities
+- Zero-gravity `PhysicsConfig`, contact events used for brick damage and the game-over trigger (ball touches the top wall)
 - Per-entity UV clipping to sample random sub-regions of a tileable texture atlas
 
 Run it out of the box by pressing **F5** in Visual Studio with **Transmission** set as the startup project.
@@ -270,6 +298,8 @@ Run it out of the box by pressing **F5** in Visual Studio with **Transmission** 
 ## License
 
 MIT License — free to use, modify, and distribute with attribution.
+
+Third-party: [Jolt Physics](https://github.com/jrouwe/JoltPhysics) (MIT, Jorrit Rouwe), [EnTT](https://github.com/skypjack/entt) (MIT), [SDL2](https://www.libsdl.org/) (zlib).
 
 ```
 MIT License

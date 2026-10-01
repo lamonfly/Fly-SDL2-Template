@@ -21,9 +21,6 @@
     <ClCompile Include="src\Breakout\PlayerPlatform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Breakout\BallMovement.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Breakout\Brick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,6 +44,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Breakout\Brick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Breakout\BreakoutLayers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\GameOverScene.h">

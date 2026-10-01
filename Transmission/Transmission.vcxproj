@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -56,6 +56,7 @@
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Label="Shared">
+    <Import Project="$(SolutionDir)Jolt.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -142,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Breakout\BallMovement.cpp" />
     <ClCompile Include="src\Breakout\Brick.cpp" />
     <ClCompile Include="src\Breakout\PlayerPlatform.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="src\Breakout\BallMovement.h" />
     <ClInclude Include="src\Breakout\Brick.h" />
+    <ClInclude Include="src\Breakout\BreakoutLayers.h" />
     <ClInclude Include="src\Breakout\PlayerPlatform.h" />
     <ClInclude Include="src\GameOverScene.h" />
     <ClInclude Include="src\SampleScene.h" />
